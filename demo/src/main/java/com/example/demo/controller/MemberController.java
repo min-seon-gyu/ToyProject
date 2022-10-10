@@ -4,8 +4,7 @@ import com.example.demo.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-@Contro
-ller
+@Controller
 public class MemberController {
 
     public final MemberService memberService;
