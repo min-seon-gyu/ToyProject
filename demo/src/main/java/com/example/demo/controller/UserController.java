@@ -20,12 +20,14 @@ public class UserController {
 
     @RequestMapping(value = "/signup", produces = "application/json; charset=utf8", method = RequestMethod.POST)
     @ResponseBody
-    public void create(@RequestBody User user ){
-        System.out.println(user.getEmail());
-        System.out.println(user.getBirth());
-        System.out.println(user.getName());
-        System.out.println(user.getPassword());
-        System.out.println(user.getNumber());
+    public String create(@RequestBody User user ){
+        //System.out.println(user.getBirth());
+        //System.out.println(user.getName());
+        //System.out.println(user.getPassword());
+        //System.out.println(user.getNumber());
+        //System.out.println(user.getEmail());
+
+        return "SUCCESS";
     }
 
 }
