@@ -1,4 +1,4 @@
-package com.WebProject.entity;
+package com.WebProject.Member;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,23 +26,14 @@ public class Member implements UserDetails {
 
     @Column(length = 100, nullable = false, unique = true)
     private String email;
-
-    private String name;
-
     private String password;
-
+    private String name;
     private String birth;
-
     private String number;
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
-    private List<String> roles = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
