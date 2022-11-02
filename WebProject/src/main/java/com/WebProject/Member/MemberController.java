@@ -25,7 +25,7 @@ public class MemberController {
     @ApiOperation(value = "회원가입 기능", notes = "회원가입 API",response = MemberResponse.class)
     @PostMapping("/join")
     public MemberResponse signUp(
-            @ApiParam(value = "이메일, 패스워드, 이름, 생년월일, 핸드폰 번호", required = true)
+            @ApiParam(value = "이메일, 패스워드, 이름, 주민등록번호, 연락처", required = true)
             @RequestBody SignUpRequest signUpRequest
     ) {
         return memberService.signUp(signUpRequest);
@@ -51,6 +51,7 @@ public class MemberController {
         MemberResponse memberResponse = MemberResponse.of(accountDetails.getMember());
         return jwtTokenProvider.reissueAtk(memberResponse);
     }
+
     @ApiOperation(value = "Access Token 접근 TEST", notes = "Access Token 접근 TEST API")
     @GetMapping("/test")
     public String test() {

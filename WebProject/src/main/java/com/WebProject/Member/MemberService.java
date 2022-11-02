@@ -30,7 +30,7 @@ public class MemberService {
                 .email(signUpRequest.getEmail())
                 .password(encodedPassword)
                 .name(signUpRequest.getName())
-                .birth(signUpRequest.getBirth())
+                .RRN(signUpRequest.getFrontRRN() + "-" + signUpRequest.getBackRRN())
                 .number(signUpRequest.getNumber())
                 .build();
 
@@ -42,12 +42,12 @@ public class MemberService {
     public MemberResponse login(LoginRequest loginRequest) {
         Member Member = memberRepository
                 .findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new BadRequestException("아이디 혹은 비밀번호를 확인하세요."));
+                .orElseThrow(() -> new BadRequestException("이메일 혹은 비밀번호를 확인하세요."));
 
         boolean matches = passwordEncoder.matches(
                 loginRequest.getPassword(),
                 Member.getPassword());
-        if (!matches) throw new BadRequestException("아이디 혹은 비밀번호를 확인하세요.");
+        if (!matches) throw new BadRequestException("이메일 혹은 비밀번호를 확인하세요.");
 
         return MemberResponse.of(Member);
     }

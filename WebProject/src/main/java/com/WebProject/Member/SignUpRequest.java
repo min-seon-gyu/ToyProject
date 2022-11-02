@@ -16,8 +16,10 @@ public class SignUpRequest {
     private String password;
     @ApiModelProperty(example = "이름")
     private String name;
-    @ApiModelProperty(example = "생년월일")
-    private String birth;
-    @ApiModelProperty(example = "핸드폰 번호")
+    @ApiModelProperty(example = "주민등록번호 앞자리")
+    private String frontRRN;
+    @ApiModelProperty(example = "주민등록번호 뒷자리")
+    private String backRRN;
+    @ApiModelProperty(example = "연락처")
     private String number;
 }

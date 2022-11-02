@@ -28,7 +28,7 @@ public class Member implements UserDetails {
     private String email;
     private String password;
     private String name;
-    private String birth;
+    private String RRN;
     private String number;
 
     @Override

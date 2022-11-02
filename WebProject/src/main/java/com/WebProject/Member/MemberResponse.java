@@ -29,7 +29,7 @@ public class MemberResponse {
                 member.getId(),
                 member.getEmail(),
                 member.getNumber(),
-                member.getBirth(),
+                member.getRRN(),
                 member.getName());
     }
 }
