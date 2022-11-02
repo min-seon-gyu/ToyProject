@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -18,11 +23,15 @@ public class Subject {
 
     private  String type;
 
-    public static Subject atk(Long accountId, String email, String name) {
-        return new Subject(accountId, email, name, "ATK");
+    @CreatedDate
+    private Long date;
+
+    public static Subject atk(Long accountId, String email, String name, Long date) {
+        return new Subject(accountId, email, name, "ATK", date);
+
     }
 
-    public static Subject rtk(Long accountId, String email, String name) {
-        return new Subject(accountId, email, name, "RTK");
+    public static Subject rtk(Long accountId, String email, String name, Long date) {
+        return new Subject(accountId, email, name, "RTK", date);
     }
 }

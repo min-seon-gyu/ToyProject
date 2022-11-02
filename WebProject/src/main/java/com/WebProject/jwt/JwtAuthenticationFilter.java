@@ -1,5 +1,6 @@
 package com.WebProject.jwt;
 
+import com.WebProject.Dao.RedisDao;
 import com.WebProject.jwt.JwtTokenProvider;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class JwtAuthenticationFilter extends  OncePerRequestFilter  {
             try {
                 Subject subject = jwtTokenProvider.getSubject(atk);
                 String requestURI = request.getRequestURI();
-                if (subject.getType().equals("RTK") && !requestURI.equals("/reissue")) {
+                if (jwtTokenProvider.existToken(atk)) {
                     throw new JwtException("토큰을 확인하세요.");
                 }
                 UserDetails userDetails = accountDetailsService.loadUserByUsername(subject.getEmail());

@@ -42,15 +42,31 @@ public class JwtTokenProvider {
         Subject atkSubject = Subject.atk(
                 memberResponse.getAccountId(),
                 memberResponse.getEmail(),
-                memberResponse.getName());
+                memberResponse.getName(),
+                new Date().getTime());
         Subject rtkSubject = Subject.rtk(
                 memberResponse.getAccountId(),
                 memberResponse.getEmail(),
-                memberResponse.getName());
+                memberResponse.getName(),
+                new Date().getTime());
         String atk = createToken(atkSubject, atkLive);
         String rtk = createToken(rtkSubject, rtkLive);
         redisDao.setValues(memberResponse.getEmail(), rtk, Duration.ofMillis(rtkLive));
         return new TokenResponse(atk, rtk);
+    }
+
+    public boolean existToken(String key) throws JsonProcessingException{
+        return redisDao.ExistToken(key);
+    }
+
+    public boolean deleteToken(String atk, String email, Long time) throws JsonProcessingException{
+        if(redisDao.ExistToken(email)){
+            redisDao.deleteValues(email);
+            long leftTime = atkLive - (new Date().getTime() - time);
+            redisDao.setValues(atk, "logout", Duration.ofMillis(leftTime));
+            return true;
+        }
+        return false;
     }
 
     private String createToken(Subject subject, Long tokenLive) throws JsonProcessingException {
@@ -77,7 +93,8 @@ public class JwtTokenProvider {
         Subject atkSubject = Subject.atk(
                 memberResponse.getAccountId(),
                 memberResponse.getEmail(),
-                memberResponse.getName());
+                memberResponse.getName(),
+                new Date().getTime());
         String atk = createToken(atkSubject, atkLive);
         return new TokenResponse(atk, null);
     }

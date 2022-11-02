@@ -24,6 +24,10 @@ public class RedisDao {
         values.set(key, data, duration);
     }
 
+    public boolean ExistToken(String email){
+        return redisTemplate.opsForValue().get(email) != null ? true : false;
+    }
+
     public String getValues(String key) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         return values.get(key);

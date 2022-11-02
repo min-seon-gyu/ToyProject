@@ -1,23 +1,31 @@
 package com.WebProject.Member;
 
 import com.WebProject.exception.BadRequestException;
+import com.WebProject.jwt.Subject;
+import io.jsonwebtoken.JwtException;
 import io.netty.util.Constant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.authentication.PasswordEncoderParser;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
 
     @Transactional
     public MemberResponse signUp(SignUpRequest signUpRequest) {
@@ -30,7 +38,7 @@ public class MemberService {
                 .email(signUpRequest.getEmail())
                 .password(encodedPassword)
                 .name(signUpRequest.getName())
-                .RRN(signUpRequest.getFrontRRN() + "-" + signUpRequest.getBackRRN())
+                .rrn(signUpRequest.getFrontRrn() + "-" + signUpRequest.getBackRrn())
                 .number(signUpRequest.getNumber())
                 .build();
 
@@ -52,4 +60,30 @@ public class MemberService {
         return MemberResponse.of(Member);
     }
 
+    @Transactional(readOnly = true)
+    public MemberResponse findEmail(FindEmailRequest findEmailRequest){
+        Member Member = memberRepository
+                .findByNameAndRrn(findEmailRequest.getName(), findEmailRequest.getFrontRrn()+"-"+findEmailRequest.getBackRrn())
+                .orElseThrow(() -> new BadRequestException("이름 혹은 주민등록번호를 확인하세요."));
+
+        return MemberResponse.of(Member);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean findPassword(FindPasswordRequest findPasswordRequest){
+        boolean isValid = memberRepository
+                .existsByEmailAndNameAndRrn(findPasswordRequest.getEmail(), findPasswordRequest.getName(), findPasswordRequest.getFrontRrn()+"-"+findPasswordRequest.getBackRrn());
+
+        return isValid;
+    }
+
+    @Transactional(readOnly = true)
+    public String logout(HttpServletRequest request){
+        String authorization = request.getHeader("Authorization");
+        if (!Objects.isNull(authorization)) {
+            System.out.println("bbb");
+            return authorization.substring(7);
+        }
+        return null;
+    }
 }
