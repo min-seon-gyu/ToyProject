@@ -5,6 +5,9 @@ import com.WebProject.jwt.Subject;
 import io.jsonwebtoken.JwtException;
 import io.netty.util.Constant;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.annotations.common.util.impl.Log;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +21,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Console;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -78,12 +85,39 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public String logout(HttpServletRequest request){
-        String authorization = request.getHeader("Authorization");
-        if (!Objects.isNull(authorization)) {
-            System.out.println("bbb");
-            return authorization.substring(7);
-        }
-        return null;
+    public List<Member> findAll(){
+        return memberRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Member> findOne(Long id){
+        return memberRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public void delete(Member member){
+        memberRepository.delete(member);
+    }
+
+    @Transactional(readOnly = false)
+    public MemberResponse update(Long id, UpdateRequest updateRequest){
+
+        Optional<Member> member = memberRepository.findById(id);
+
+        member.ifPresent(selectMember -> {
+            selectMember.setEmail(updateRequest.getEmail());
+            selectMember.setName(updateRequest.getName());
+            selectMember.setRrn(updateRequest.getFrontRrn() + "-" + updateRequest.getBackRrn());
+            selectMember.setNumber(updateRequest.getNumber());
+
+            selectMember = memberRepository.save(selectMember);
+
+        });
+        return MemberResponse.of(member.get());
+    }
+
+    @Transactional(readOnly = true)
+    public Long totalCount(){
+        return memberRepository.count();
     }
 }

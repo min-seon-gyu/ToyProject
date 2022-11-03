@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class Subject {
 
-    private  Long accountId;
+    private  Long id;
 
     private  String email;
 
@@ -26,12 +26,12 @@ public class Subject {
     @CreatedDate
     private Long date;
 
-    public static Subject atk(Long accountId, String email, String name, Long date) {
-        return new Subject(accountId, email, name, "ATK", date);
+    public static Subject atk(Long id, String email, String name, Long date) {
+        return new Subject(id, email, name, "ATK", date);
 
     }
 
-    public static Subject rtk(Long accountId, String email, String name, Long date) {
-        return new Subject(accountId, email, name, "RTK", date);
+    public static Subject rtk(Long id, String email, String name, Long date) {
+        return new Subject(id, email, name, "RTK", date);
     }
 }

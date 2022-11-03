@@ -40,12 +40,12 @@ public class JwtTokenProvider {
     // JWT 토큰 생성
     public TokenResponse createTokensByLogin(MemberResponse memberResponse) throws JsonProcessingException {
         Subject atkSubject = Subject.atk(
-                memberResponse.getAccountId(),
+                memberResponse.getId(),
                 memberResponse.getEmail(),
                 memberResponse.getName(),
                 new Date().getTime());
         Subject rtkSubject = Subject.rtk(
-                memberResponse.getAccountId(),
+                memberResponse.getId(),
                 memberResponse.getEmail(),
                 memberResponse.getName(),
                 new Date().getTime());
@@ -91,7 +91,7 @@ public class JwtTokenProvider {
         String rtkInRedis = redisDao.getValues(memberResponse.getEmail());
         if (Objects.isNull(rtkInRedis)) throw new ForbiddenException("인증 정보가 만료되었습니다.");
         Subject atkSubject = Subject.atk(
-                memberResponse.getAccountId(),
+                memberResponse.getId(),
                 memberResponse.getEmail(),
                 memberResponse.getName(),
                 new Date().getTime());
