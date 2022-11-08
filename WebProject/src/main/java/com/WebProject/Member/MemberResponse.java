@@ -6,8 +6,7 @@ import lombok.Getter;
 @Getter
 
 public class MemberResponse {
-    @ApiModelProperty(example = "고유 id")
-    private final long id;
+
     @ApiModelProperty(example = "이메일")
     private final String email;
     @ApiModelProperty(example = "이름")
@@ -18,8 +17,7 @@ public class MemberResponse {
     private String number;
 
 
-    private MemberResponse(Long id, String email, String name, String rrn, String number) {
-        this.id = id;
+    private MemberResponse(String email, String name, String rrn, String number) {
         this.email = email;
         this.name = name;
         this.number = number;
@@ -28,7 +26,6 @@ public class MemberResponse {
 
     public static MemberResponse of(Member member) {
         return new MemberResponse(
-                member.getId(),
                 member.getEmail(),
                 member.getName(),
                 member.getRrn(),

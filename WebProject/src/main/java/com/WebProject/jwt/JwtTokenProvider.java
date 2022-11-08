@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
@@ -40,12 +41,10 @@ public class JwtTokenProvider {
     // JWT 토큰 생성
     public TokenResponse createTokensByLogin(MemberResponse memberResponse) throws JsonProcessingException {
         Subject atkSubject = Subject.atk(
-                memberResponse.getId(),
                 memberResponse.getEmail(),
                 memberResponse.getName(),
                 new Date().getTime());
         Subject rtkSubject = Subject.rtk(
-                memberResponse.getId(),
                 memberResponse.getEmail(),
                 memberResponse.getName(),
                 new Date().getTime());
@@ -78,12 +77,12 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(date)
                 .setExpiration(new Date(date.getTime() + tokenLive))
-                .signWith(SignatureAlgorithm.HS256, key)
+                .signWith(SignatureAlgorithm.HS256, key.getBytes())
                 .compact();
     }
 
     public Subject getSubject(String atk) throws JsonProcessingException {
-        String subjectStr = Jwts.parser().setSigningKey(key).parseClaimsJws(atk).getBody().getSubject();
+        String subjectStr = Jwts.parser().setSigningKey(key.getBytes(Charset.forName("UTF-8"))).parseClaimsJws(atk).getBody().getSubject();
         return objectMapper.readValue(subjectStr, Subject.class);
     }
 
@@ -91,7 +90,6 @@ public class JwtTokenProvider {
         String rtkInRedis = redisDao.getValues(memberResponse.getEmail());
         if (Objects.isNull(rtkInRedis)) throw new ForbiddenException("인증 정보가 만료되었습니다.");
         Subject atkSubject = Subject.atk(
-                memberResponse.getId(),
                 memberResponse.getEmail(),
                 memberResponse.getName(),
                 new Date().getTime());

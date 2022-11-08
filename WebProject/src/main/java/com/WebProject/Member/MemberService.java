@@ -90,8 +90,8 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Member> findOne(Long id){
-        return memberRepository.findById(id);
+    public Optional<Member> findOne(String email){
+        return memberRepository.findByEmail(email);
     }
 
     @Transactional(readOnly = true)
@@ -100,18 +100,31 @@ public class MemberService {
     }
 
     @Transactional(readOnly = false)
-    public MemberResponse update(Long id, UpdateRequest updateRequest){
+    public MemberResponse update(String email, UpdateRequest updateRequest){
 
-        Optional<Member> member = memberRepository.findById(id);
+        Optional<Member> member = memberRepository.findByEmail(email);
 
         member.ifPresent(selectMember -> {
             selectMember.setEmail(updateRequest.getEmail());
-            selectMember.setName(updateRequest.getName());
-            selectMember.setRrn(updateRequest.getFrontRrn() + "-" + updateRequest.getBackRrn());
-            selectMember.setNumber(updateRequest.getNumber());
+
+            if(updateRequest.getName() != null){
+                selectMember.setName(updateRequest.getName());
+            }
+
+            if(updateRequest.getNumber() != null){
+                selectMember.setNumber(updateRequest.getNumber());
+            }
+
+            if(updateRequest.getFrontRrn() != null && updateRequest.getBackRrn() != null){
+                selectMember.setRrn(updateRequest.getFrontRrn() + "-" + updateRequest.getBackRrn());
+            }
+
+            if(updateRequest.getPassword() != null){
+                String encodedPassword = passwordEncoder.encode(updateRequest.getPassword());
+                selectMember.setPassword(encodedPassword);
+            }
 
             selectMember = memberRepository.save(selectMember);
-
         });
         return MemberResponse.of(member.get());
     }

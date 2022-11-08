@@ -12,6 +12,8 @@ public class UpdateRequest {
     private String email;
     @ApiModelProperty(example = "이름")
     private String name;
+    @ApiModelProperty(example = "비밀번호")
+    private String password;
     @ApiModelProperty(example = "주민등록번호 앞자리")
     private String frontRrn;
     @ApiModelProperty(example = "주민등록번호 뒷자리")
