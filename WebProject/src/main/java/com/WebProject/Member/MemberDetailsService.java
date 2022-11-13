@@ -1,6 +1,7 @@
-package com.WebProject.jwt;
+package com.WebProject.Member;
 
 import com.WebProject.Member.Member;
+import com.WebProject.Member.MemberDetails;
 import com.WebProject.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AccountDetailsService implements UserDetailsService {
+public class MemberDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
@@ -19,6 +20,6 @@ public class AccountDetailsService implements UserDetailsService {
         Member member = memberRepository
                 .findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-        return new AccountDetails(member);
+        return new MemberDetails(member);
     }
 }

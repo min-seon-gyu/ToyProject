@@ -1,6 +1,5 @@
 package com.WebProject.Member;
 
-import com.WebProject.jwt.AccountDetails;
 import com.WebProject.jwt.Subject;
 import com.WebProject.jwt.TokenResponse;
 import com.WebProject.jwt.JwtTokenProvider;
@@ -12,9 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Api(tags = {"회원관련 API"})
 @Slf4j
@@ -30,9 +30,7 @@ public class MemberController {
     @PostMapping("/member/join")
     public MemberResponse join(
             @ApiParam(value = "이메일, 패스워드, 이름, 주민등록번호, 연락처", required = true)
-            @RequestBody SignUpRequest signUpRequest
-    ) {
-        log.info("회원가입 성공");
+            @RequestBody SignUpRequest signUpRequest) {
         return memberService.signUp(signUpRequest);
     }
 
@@ -41,13 +39,11 @@ public class MemberController {
     @PostMapping("/member/login")
     public TokenResponse login(
             @ApiParam(value = "이메일, 패스워드", required = true)
-            @RequestBody LoginRequest loginRequest
-    ) throws JsonProcessingException {
-        log.info("로그인 - [Email]:{}, [Password]:{}", loginRequest.getEmail(), loginRequest.getPassword());
+            @RequestBody LoginRequest loginRequest) throws JsonProcessingException {
         MemberResponse memberResponse = memberService.login(loginRequest);
-        TokenResponse aa = jwtTokenProvider.createTokensByLogin(memberResponse);
-        log.info("로그인 성공 - [ACCESS TOKEN]:{}, REFRESH TOKEN:{}", aa.getAtk(), aa.getRtk());
-        return aa;
+        TokenResponse tokenResponse = jwtTokenProvider.createTokensByLogin(memberResponse);
+        log.info("로그인 성공 - [EMAIL]:{}", loginRequest.getEmail());
+        return tokenResponse;
     }
 
     @ApiOperation(value = "이메일 찾기 기능", notes = "이메일 찾기 API")
@@ -55,9 +51,7 @@ public class MemberController {
     public String findEmail(
             @ApiParam(value = "이름, 주민등록번호", required = true)
             @RequestBody FindEmailRequest findEmailRequest){
-        log.info("이메일 찾기 - [Name]:{}, [RNN]:{}-{}", findEmailRequest.getName(), findEmailRequest.getFrontRrn(), findEmailRequest.getBackRrn());
         MemberResponse memberResponse = memberService.findEmail(findEmailRequest);
-        log.info("이메일 찾기 성공 - [Email]:{}", memberResponse.getEmail());
         return memberResponse.getEmail();
     }
 
@@ -66,7 +60,6 @@ public class MemberController {
     public boolean findPassword(
             @ApiParam(value = "이메일, 이름, 주민등록번호", required = true)
             @RequestBody FindPasswordRequest findPasswordRequest){
-        log.info("비밀번호 찾기 - [Email]:{}, [Name]:{}, [RNN]:{}-{}", findPasswordRequest.getEmail(), findPasswordRequest.getName(), findPasswordRequest.getFrontRrn(), findPasswordRequest.getBackRrn());
         boolean isValid = memberService.findPassword(findPasswordRequest);
         log.info("비밀번호 찾기 - [Result]:{}", isValid);
         return isValid;
@@ -75,12 +68,10 @@ public class MemberController {
     @ApiOperation(value = "로그아웃 기능", notes = "로그아웃 API")
     @GetMapping("/member/logout")
     public String logout(
-            @ApiParam(value = "bearer Access Token", required = true)
             @RequestHeader(value = "Authorization") String header
     ) throws JsonProcessingException {
         if (!Objects.isNull(header)) {
             String atk = header.substring(7);
-            log.info("로그아웃 - [ACCESS TOKEN]:{}", atk);
             Subject subject = jwtTokenProvider.getSubject(atk);
             if(jwtTokenProvider.deleteToken(atk, subject.getEmail(), subject.getDate())){
                 log.info("로그아웃 - [Result]:True");
@@ -97,71 +88,41 @@ public class MemberController {
     @ApiOperation(value = "회원 정보 기능", notes = "회원 정보 API")
     @GetMapping("/member/info")
     public MemberResponse info(
-            @ApiParam(value = "bearer Access Token", required = true)
-            @RequestHeader(value = "Authorization") String header
-    ) throws JsonProcessingException {
-        if (!Objects.isNull(header)) {
-            String atk = header.substring(7);
-            Subject subject = jwtTokenProvider.getSubject(atk);
-            MemberResponse memberResponse = MemberResponse.of(memberService.findOne(subject.getEmail()).get());
+            @AuthenticationPrincipal MemberDetails memberDetails){
+            MemberResponse memberResponse = MemberResponse.of(memberDetails.getMember());
             log.info("회원 정보 - [Email]:{}, [Name]:{}, [Number]:{}, [RRN]:{}", memberResponse.getEmail(), memberResponse.getName(), memberResponse.getNumber(), memberResponse.getRrn());
             return memberResponse;
-        }
-        return null;
     }
 
     @ApiOperation(value = "회원 탈퇴 기능", notes = "회원 탈퇴 API")
     @GetMapping("/member/delete")
     public boolean delete(
-            @ApiParam(value = "bearer Access Token", required = true)
-            @RequestHeader(value = "Authorization") String header
-    ) throws JsonProcessingException {
-        if (!Objects.isNull(header)) {
-            String atk = header.substring(7);
-            Subject subject = jwtTokenProvider.getSubject(atk);
-            Member member = memberService.findOne(subject.getEmail()).get();
-            memberService.delete(member);
-            log.info("회원 탈퇴 기능 성공");
+            @AuthenticationPrincipal MemberDetails memberDetails){
+            memberService.delete(memberDetails.getMember());
+            log.info("회원 탈퇴 - [EMAIL]:{}", memberDetails.getMember().getEmail());
             return true;
-        }
-        log.info("회원 탈퇴 기능 실패");
-        return  false;
     }
 
     @ApiOperation(value = "회원 수정 기능", notes = "회원 수정  API",response = MemberResponse.class)
     @PutMapping("/member/update")
     public MemberResponse update(
-            @ApiParam(value = "bearer Access Token", required = true)
-            @RequestHeader(value = "Authorization") String header,
+            @AuthenticationPrincipal MemberDetails memberDetails,
             @ApiParam(value = "이메일, 이름, 주민등록번호, 연락처", required = true)
-            @RequestBody UpdateRequest updateRequest
-    ) throws JsonProcessingException{
-        if (!Objects.isNull(header)) {
-            String atk = header.substring(7);
-            Subject subject = jwtTokenProvider.getSubject(atk);
-            log.info("회원 수정 기능 성공");
-            return memberService.update(subject.getEmail(), updateRequest);
-        }
-        log.info("회원 수정 기능 실패");
-        return null;
+            @RequestBody UpdateRequest updateRequest){
+            MemberResponse memberResponse = memberService.update(memberDetails.getMember().getEmail(), updateRequest);
+            log.info("회원 수정 - [EMAIL]:{}", memberResponse.getEmail());
+            return memberResponse;
     }
 
 
     @ApiOperation(value = "Access Token 재발급 기능", notes = "Access Token 재발급 API", response = TokenResponse.class)
     @GetMapping("/member/reissue")
     public TokenResponse reissue(
-            @ApiParam(value = "헤더 Authorization에 bearer Refresh Token 형식", required = true)
-            @AuthenticationPrincipal AccountDetails accountDetails
+            @AuthenticationPrincipal MemberDetails memberDetails
     ) throws JsonProcessingException {
-        MemberResponse memberResponse = MemberResponse.of(accountDetails.getMember());
+        MemberResponse memberResponse = MemberResponse.of(memberDetails.getMember());
         log.info("Access Token 재발급 - [Email]:{}", memberResponse.getEmail());
         return jwtTokenProvider.reissueAtk(memberResponse);
-    }
-
-    @ApiOperation(value = "Access Token 접근 TEST", notes = "Access Token 접근 TEST API")
-    @GetMapping("/test")
-    public String test() {
-        return "good!";
     }
 
     @ApiOperation(value = "전체 회원 정보 기능", notes = "전체 회원 정보 API")

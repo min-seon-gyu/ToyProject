@@ -1,15 +1,13 @@
 package com.WebProject.config;
 
-import com.WebProject.jwt.AccountDetailsService;
+import com.WebProject.Member.MemberDetailsService;
 import com.WebProject.jwt.JwtAuthenticationFilter;
 import com.WebProject.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -29,7 +27,7 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final AccountDetailsService accountDetailsService;
+    private final MemberDetailsService memberDetailsService;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -60,7 +58,7 @@ public class SecurityConfig {
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, accountDetailsService),
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, memberDetailsService),
                 UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

@@ -1,9 +1,7 @@
 package com.WebProject.jwt;
 
-import com.WebProject.Dao.RedisDao;
-import com.WebProject.jwt.JwtTokenProvider;
+import com.WebProject.Member.MemberDetailsService;
 import io.jsonwebtoken.JwtException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,11 +19,11 @@ public class JwtAuthenticationFilter extends  OncePerRequestFilter  {
 
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final AccountDetailsService accountDetailsService;
+    private final MemberDetailsService memberDetailsService;
 
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, AccountDetailsService accountDetailsService) {
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, MemberDetailsService memberDetailsService) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.accountDetailsService = accountDetailsService;
+        this.memberDetailsService = memberDetailsService;
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,7 +36,7 @@ public class JwtAuthenticationFilter extends  OncePerRequestFilter  {
                 if (jwtTokenProvider.existToken(atk)) {
                     throw new JwtException("토큰을 확인하세요.");
                 }
-                UserDetails userDetails = accountDetailsService.loadUserByUsername(subject.getEmail());
+                UserDetails userDetails = memberDetailsService.loadUserByUsername(subject.getEmail());
                 Authentication token = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(token);
             } catch (JwtException e) {

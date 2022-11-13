@@ -36,14 +36,14 @@ public class MemberService {
 
     @Transactional
     public MemberResponse signUp(SignUpRequest signUpRequest) {
-        boolean isExist = memberRepository
-                .existsByEmail(signUpRequest.getEmail());
-        if (isExist) throw new BadRequestException("이미 존재하는 이메일입니다.");
-        String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword());
+        if (memberRepository.existsByEmail(signUpRequest.getEmail()))
+            throw new BadRequestException("이미 존재하는 이메일입니다.");
+        if (memberRepository.findByNameAndRrn(signUpRequest.getName(), signUpRequest.getFrontRrn() + "-" + signUpRequest.getBackRrn()).isPresent())
+            throw new BadRequestException("이미 회원가입 되어있습니다.");
 
         Member member = Member.builder()
                 .email(signUpRequest.getEmail())
-                .password(encodedPassword)
+                .password(passwordEncoder.encode(signUpRequest.getPassword()))
                 .name(signUpRequest.getName())
                 .rrn(signUpRequest.getFrontRrn() + "-" + signUpRequest.getBackRrn())
                 .number(signUpRequest.getNumber())
@@ -89,12 +89,7 @@ public class MemberService {
         return memberRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
-    public Optional<Member> findOne(String email){
-        return memberRepository.findByEmail(email);
-    }
-
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public void delete(Member member){
         memberRepository.delete(member);
     }

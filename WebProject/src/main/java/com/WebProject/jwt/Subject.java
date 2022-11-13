@@ -30,6 +30,7 @@ public class Subject {
     }
 
     public static Subject rtk(String email, String name, Long date) {
+
         return new Subject(email, name, "RTK", date);
     }
 }
