@@ -128,4 +128,21 @@ public class MemberService {
     public Long totalCount(){
         return memberRepository.count();
     }
+
+    @Transactional(readOnly = false)
+    public MemberResponse passwordUpdate(PasswordUpdateRequest passwordUpdateRequest) {
+        Optional<Member> member = memberRepository.findByEmail(passwordUpdateRequest.getEmail());
+
+        member.ifPresent(selectMember -> {
+            selectMember.setEmail(passwordUpdateRequest.getEmail());
+
+            if(passwordUpdateRequest.getPassword() != null){
+                String encodedPassword = passwordEncoder.encode(passwordUpdateRequest.getPassword());
+                selectMember.setPassword(encodedPassword);
+            }
+
+            selectMember = memberRepository.save(selectMember);
+        });
+        return MemberResponse.of(member.get());
+    }
 }

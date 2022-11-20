@@ -1,4 +1,4 @@
-package com.WebProject.score;
+package com.WebProject.Score;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

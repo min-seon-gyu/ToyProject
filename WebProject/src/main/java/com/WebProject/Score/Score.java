@@ -1,4 +1,4 @@
-package com.WebProject.score;
+package com.WebProject.Score;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;

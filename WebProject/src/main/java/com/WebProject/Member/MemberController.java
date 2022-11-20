@@ -95,7 +95,7 @@ public class MemberController {
     }
 
     @ApiOperation(value = "회원 탈퇴 기능", notes = "회원 탈퇴 API")
-    @GetMapping("/member/delete")
+    @PostMapping("/member/delete")
     public boolean delete(
             @AuthenticationPrincipal MemberDetails memberDetails){
             memberService.delete(memberDetails.getMember());
@@ -112,6 +112,16 @@ public class MemberController {
             MemberResponse memberResponse = memberService.update(memberDetails.getMember().getEmail(), updateRequest);
             log.info("회원 수정 - [EMAIL]:{}", memberResponse.getEmail());
             return memberResponse;
+    }
+
+    @ApiOperation(value = "회원 비밀번호 수정 기능", notes = "회원 수정  API",response = MemberResponse.class)
+    @PutMapping("/member/pwUpdate")
+    public MemberResponse pwUpdate(
+            @ApiParam(value = "비밀번호", required = true)
+            @RequestBody PasswordUpdateRequest PasswordUpdateRequest){
+        log.info("회원 수정 - [EMAIL]:{}", PasswordUpdateRequest.getEmail());
+        MemberResponse memberResponse = memberService.passwordUpdate(PasswordUpdateRequest);
+        return memberResponse;
     }
 
 

@@ -26,5 +26,5 @@ public class Comment {
 
     private String content;
 
-    private Date writeTime;
+    private String write_time;
 }
