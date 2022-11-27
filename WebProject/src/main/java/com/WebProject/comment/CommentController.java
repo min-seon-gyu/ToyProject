@@ -1,10 +1,12 @@
 package com.WebProject.comment;
 
+import com.WebProject.Member.MemberDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +21,10 @@ public class CommentController {
     private final CommentService commentService;
     @ApiOperation(value = "댓글 추가 기능", notes = "댓글 추가 API")
     @PostMapping("/comment/add")
-    public CommentResponse addScore(
+    public void addScore(
             @ApiParam(value = "CommentRequest", required = true)
             @RequestBody CommentAddRequest commentAddRequest){
-        return commentService.addComment(commentAddRequest);
+        commentService.addComment(commentAddRequest);
     }
 
     @ApiOperation(value = "댓글 삭제 기능", notes = "댓글 삭제 API")
