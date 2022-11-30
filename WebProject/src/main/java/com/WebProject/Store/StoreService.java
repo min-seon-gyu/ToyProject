@@ -83,4 +83,13 @@ public class StoreService {
         }
         return storeRepository.getListByAddressCount(result);
     }
+
+    @Transactional(readOnly = true)
+    public List<Store> getListByName(String name){
+        return storeRepository.getListByName(name);
+    }
+    @Transactional(readOnly = true)
+    public Long getListByNameCount(String name){
+        return storeRepository.getListByNameCount(name);
+    }
 }

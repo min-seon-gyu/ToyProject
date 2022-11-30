@@ -24,4 +24,10 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     @Query(value = "select count(*) from store where store.address like %:address%", nativeQuery = true)
     Long getListByAddressCount(@Param("address") String address);
 
+    @Query(value = "select id, name, address, tell ,operating_time, type, representative_menu, lat,lon ,(select avg(score) from score where score.id = store.id) score from store where store.name like %:name%", nativeQuery = true)
+    List<Store> getListByName(@Param("name") String name);
+
+    @Query(value = "select count(*) from store where store.name like %:name%", nativeQuery = true)
+    Long getListByNameCount(@Param("name") String name);
+
 }

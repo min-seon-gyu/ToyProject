@@ -54,4 +54,12 @@ public class StoreController {
         return ListStoreResponse.builder().list(StoreResponse.of(list)).count(storeService.getListByAddressCount(address)).build();
     }
 
+    @ApiOperation(value = "상점 이름 검색 기능", notes = "상점 이름 검색 API")
+    @GetMapping("/store/name")
+    public ListStoreResponse getStoreByName(
+            @ApiParam(value = "상점 이름", required = true)
+            @RequestParam (name = "name") String name){
+        List<Store> list = storeService.getListByName(name);
+        return ListStoreResponse.builder().list(StoreResponse.of(list)).count(storeService.getListByNameCount(name)).build();
+    }
 }
