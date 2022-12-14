@@ -33,9 +33,14 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
+    public Long totalCount(){
+        return storeRepository.count();
+    }
+
+    @Transactional(readOnly = true)
     public List<Store> getListByAddress(String address){
         String result = null;
-        if(address.equals("jung-gu")){
+        if(address.equals("Jung-gu")){
             result = "중구";
         }
         else if(address.equals("Yuseong-gu")){
@@ -57,14 +62,9 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
-    public Long totalCount(){
-        return storeRepository.count();
-    }
-
-    @Transactional(readOnly = true)
     public Long getListByAddressCount(String address){
         String result = null;
-        if(address.equals("jung-gu")){
+        if(address.equals("Jung-gu")){
             result = "중구";
         }
         else if(address.equals("Yuseong-gu")){
@@ -82,6 +82,60 @@ public class StoreService {
             throw new BadRequestException("주소 양식이 잘못되었습니다.");
         }
         return storeRepository.getListByAddressCount(result);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Store> getListByType(String type){
+        String result = null;
+        if(type.equals("Korean")){
+            result = "한식";
+        }
+        else if(type.equals("Western")){
+            result = "양식";
+        }
+        else if(type.equals("Chinese")){
+            result = "중식";
+        }
+        else if(type.equals("Japanese")){
+            result = "일식";
+        }
+        else if(type.equals("Dessert")){
+            result = "디저트";
+        }
+        else if(type.equals("Snack")){
+            result = "분식";
+        }
+        else {
+            throw new BadRequestException("타입 양식이 잘못되었습니다.");
+        }
+        return storeRepository.getListByType(result);
+    }
+
+    @Transactional(readOnly = true)
+    public Long getListByTypeCount(String type){
+        String result = null;
+        if(type.equals("Korean")){
+            result = "한식";
+        }
+        else if(type.equals("Western")){
+            result = "양식";
+        }
+        else if(type.equals("Chinese")){
+            result = "중식";
+        }
+        else if(type.equals("Japanese")){
+            result = "일식";
+        }
+        else if(type.equals("Dessert")){
+            result = "디저트";
+        }
+        else if(type.equals("Snack")){
+            result = "분식";
+        }
+        else {
+            throw new BadRequestException("타입 양식이 잘못되었습니다.");
+        }
+        return storeRepository.getListByTypeCount(result);
     }
 
     @Transactional(readOnly = true)

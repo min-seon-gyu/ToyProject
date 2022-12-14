@@ -48,10 +48,19 @@ public class StoreController {
     @ApiOperation(value = "상점 구별 리스트 기능", notes = "상점 구별 리스트 API")
     @GetMapping("/store/address")
     public ListStoreResponse getStoreByAddress(
-            @ApiParam(value = "상점 주소(구)", required = true)
+            @ApiParam(value = "동구 : Dong-gu, 서구 : Seo-gu, 중구 : Jung-gu, 유성구 : Yuseong-gu, 대덕구 : Daedeok-gu", required = true)
             @RequestParam (name = "address") String address){
         List<Store> list = storeService.getListByAddress(address);
         return ListStoreResponse.builder().list(StoreResponse.of(list)).count(storeService.getListByAddressCount(address)).build();
+    }
+
+    @ApiOperation(value = "상점 타입별 리스트 기능", notes = "상점 타입별 리스트 API")
+    @GetMapping("/store/type")
+    public ListStoreResponse getStoreByType(
+            @ApiParam(value = "한식 : Korean, 양식 : Western, 중식 : Chinese, 일식 : Japanese, 디저트 : Dessert, 분식 : Snack", required = true)
+            @RequestParam (name = "type") String type){
+        List<Store> list = storeService.getListByType(type);
+        return ListStoreResponse.builder().list(StoreResponse.of(list)).count(storeService.getListByTypeCount(type)).build();
     }
 
     @ApiOperation(value = "상점 이름 검색 기능", notes = "상점 이름 검색 API")
