@@ -1,0 +1,58 @@
+aws ec2 인스턴스 생성
+설정할 것
+1. ami - ubuntu
+2. 인스턴스유형 t2.micro
+3. 키 페어 생성
+4. 네트워크 설정 SSH 트래픽 허용에 내 IP 값 넣기
+5. 탄력적 IP 할당 후 생성한 인스턴스에 연결
+6. 인스턴스 실행
+
+인스턴스 실행하는 법
+1. XShell 설치 및 실행
+2. 새 세션 등록 정보에 호스트는 전에 만든 인스턴스 퍼블릭 DNS값 넣기
+3. 사용자 이름은 인스턴스 정보에 있는 이름 지정
+4. 실행 하여 키 등록할 때는 아까 생성한 키 페어 넣기
+
+XShell 실행 후
+1. sudo apt-get install openjdk-11-jdk
+(자바 버전 맞게 설치)
+2. sudo apt-get install git 
+(깃 설치 후 git --version 으로 설치 확인)
+3. 깃 관리할 폴더 생성 후 
+3-1. git init
+3-2. git remote add origin git@github.com:min-seon-gyu/Web_Backend.git
+3-3. git remote -v  로 확인
+4. ssh-keygen -t rsa -b 4096 -C "gcael@naver.com" SSH KEY 발급 하고
+5. 발급된 SSH 키를 깃에 추가
+
+백그라운드로 실행 및 종료
+
+실행
+1. nohup 명령어 실행
+
+종료
+1. ps -ef 명령어를 통해 실행되고있는 목록 가져와서
+2 kill PID 명령어 실행
+
+http://43.200.99.107:8080
+
+20201009
+aws ec2 인스턴스 생성
+xshell 설치 및 가상 서버 접근
+가상 서버 JDK설치 및 JAR 실행 확인
+
+20201010
+CORS 에러 발생 Configuraror 해결 
+
+
+
+
+{
+   "email" : "email",
+   "password" : "password",
+   "name" : "name",
+   "birth" : "birth",
+   "number" : 1
+}
+
+
