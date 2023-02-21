@@ -13,8 +13,28 @@
 
 ## 프로젝트를 진행하면서 배운 점
 
-- ### CORS 문제
-클라이언트에서 서버로 Mapping을 하였을 때 CORS문제가 발생하였다. 그래서 원인을 알아보니 클라이언트에 있는 Origin과 서버에 있는 Origin이 달라서 생기는 문제였다.
+- ### CORS
+클라이언트에서 서버로 Mapping을 하였을 때 CORS문제가 발생하였다. 그래서 원인을 알아보니 클라이언트에 있는 Origin과 서버에 있는 Origin이 달라서 생기는 문제였다. 그래서 서버쪽에서 접근하는 Origin에 대해서 필터처리를 해줘야 했다.
 
+```java
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+```
+
+- ### 시큐리티
+
+- ### 서버 배포
+
+- ### JWT 인증
+
+- ### Redis
 
 https://velog.io/@gcael/CORS
