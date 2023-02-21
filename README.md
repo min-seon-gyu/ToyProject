@@ -3,7 +3,7 @@
 - #### 주제 : 대전광역시 음식점들을 소개
 - #### 참여인원 : 2명
 - #### 맡은 포지션 : 백엔드 서버 개발
-- #### 사용 기술 : Java, Spring boot, MySQL, Redis, JWT  Cancel changes
+- #### 사용 기술 : Java, Spring boot, MySQL, Redis, JWT
 
 ## 주요 기능
 #### 1. 회원에 대한 CRUD 기능 구현
