@@ -48,14 +48,56 @@ AWS EC2 인스턴스를 생성 및 설정 과정은 다음과 같다.
     }
 ```
 
-이후에 CORS에 대해서 공부해보고 개발블로그에 기록하였다.
+이후에 CORS에 대해서 학습해보고 개발블로그에 기록하였다.
 
 https://velog.io/@gcael/CORS
 
 - ### 시큐리티
-JWT 인증 다음으로 정말 어려웠던 내용이었다.
+JWT 인증 다음으로 정말 어려웠던 내용이었다. 처음에는 WebSecurityConfigurerAdapter 클래스를 상속을 받아서 구현을 하려고 했지만 해당 클래스가 Deprecated가 되어서 사용을 할 수가 없었다. 대신 Spring Security 공식문서에 SecurityFilterChain 클래스를 사용한 예시가 있어서 참고를 하여 구현을 해보았다.
 
+```java
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
+                .csrf().disable() // csrf disable
+                .httpBasic().disable() // httpBasic disable
+                .exceptionHandling() // 예외발생 핸들링
+                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 사용 X
+                .and()
+                .authorizeRequests()
+                .antMatchers("/member/join", "/member/login").permitAll() // 로그인, 회원가입만 허용
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .anyRequest().authenticated() // 그 외에는 인증된 유저만 허용
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, memberDetailsService),
+                UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() throws Exception {
+        return (web) ->         web.ignoring().antMatchers("/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/webjars/**");
+    }
+```
 - ### JWT 인증
+이번 프로젝트에서는 로그인 인증에 대해 JWT 토큰이라는 기술을 사용해보았다. 기존 쿠키나 세션을 사용하는 방법이 JWT 토큰보다 비교적 간단하였지만 이번 기회에 JWT에 대해서 공부를 하기 위해서 채택되었다.
+
+
+이번 JWT 토큰을 사용하면서 쿠키와 세션에 대해서도 자세히 학습해보고 JWT 토큰에 대해서도 알아보았던 내용을 개발블로그에 기록하였다.
+쿠키, 세션 학습
+
+https://velog.io/@gcael/%EC%BF%A0%ED%82%A4%EC%99%80-%EC%84%B8%EC%85%98
+
+JWT 
 
 - ### Redis
 
