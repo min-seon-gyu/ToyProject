@@ -94,6 +94,65 @@ JWT 인증 다음으로 정말 어려웠던 내용이었다. 처음에는 WebSec
                 "/webjars/**");
     }
 ```
+
+- ### Redis
+
+```java
+@Configuration
+public class RedisConfig {
+    @Value("${spring.redis.host}")
+    private String host;
+
+    @Value("${spring.redis.port}")
+    private int port;
+
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        return new LettuceConnectionFactory(host, port);
+    }
+
+    @Bean
+    public RedisTemplate<String, String> redisTemplate() {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        return redisTemplate;
+    }
+}
+```
+
+
+```java
+@Component
+public class RedisDao {
+    private final RedisTemplate<String, String> redisTemplate;
+
+    public RedisDao(RedisTemplate<String, String> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
+    public void setValues(String key, String data, Duration duration) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        values.set(key, data, duration);
+    }
+
+    public boolean ExistToken(String email){
+        return redisTemplate.opsForValue().get(email) != null ? true : false;
+    }
+
+    public String getValues(String key) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        return values.get(key);
+    }
+
+    public void deleteValues(String key) {
+        redisTemplate.delete(key);
+    }
+}
+```
+
+
 - ### JWT 인증
 이번 프로젝트에서는 로그인 인증에 대해 JWT 토큰이라는 기술을 사용해보았다. 기존 쿠키나 세션을 사용하는 방법이 JWT 토큰보다 비교적 간단하였지만 이번 기회에 JWT에 대해서 공부를 하기 위해서 채택되었다.
 
@@ -104,6 +163,6 @@ JWT 인증 다음으로 정말 어려웠던 내용이었다. 처음에는 WebSec
 
 JWT 학습 - 
 
-- ### Redis
+
 
 
