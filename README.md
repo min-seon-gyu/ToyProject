@@ -58,7 +58,7 @@ AWS EC2 인스턴스를 생성 및 설정 과정은 다음과 같다.
 
 https://velog.io/@gcael/CORS
 
-- ### 시큐리티
+- ### Spring Security
 JWT 인증 다음으로 정말 어려웠던 내용이었다. 처음에는 WebSecurityConfigurerAdapter 클래스를 상속을 받아서 구현을 하려고 했지만 해당 클래스가 Deprecated가 되어서 사용을 할 수가 없었다. 대신 Spring Security 공식문서에 SecurityFilterChain 클래스를 사용한 예시가 있어서 참고를 하여 구현을 해보았다.
 
 ```java
@@ -76,7 +76,7 @@ JWT 인증 다음으로 정말 어려웠던 내용이었다. 처음에는 WebSec
                 .and()
                 .authorizeRequests()
                 .antMatchers("/member/join", "/member/login").permitAll() // 로그인, 회원가입만 허용
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Preflight 요청 허용
                 .anyRequest().authenticated() // 그 외에는 인증된 유저만 허용
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, memberDetailsService),
@@ -94,8 +94,76 @@ JWT 인증 다음으로 정말 어려웠던 내용이었다. 처음에는 WebSec
                 "/webjars/**");
     }
 ```
+
+- ### Redis
+JWT 토큰 방식을 활용하면서 보안성을 더 높이기 위해 Refresh Token(이하 rtk)을 만들어 관리를 하기로 했다. rtk를 관리하는 장소로 Redis를 활용해보았다.
+
+#### Redis 환경 설정
+```java
+@Configuration
+public class RedisConfig {
+    @Value("${spring.redis.host}")
+    private String host;
+
+    @Value("${spring.redis.port}")
+    private int port;
+
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        return new LettuceConnectionFactory(host, port);
+    }
+
+    @Bean
+    public RedisTemplate<String, String> redisTemplate() {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        return redisTemplate;
+    }
+}
+```
+
+RedisTemplate 클래스는 Spring 공식문서에 따르면 Redis 데이터 액세스 코드를 단순화하는 도우미 클래스입니다. RedisTemplate를 Bean으로 등록하고
+키, 벨류에 대한 직렬화를 String으로 해줍니다. 그리고 setConnectionFactory은 jedis와 lettuce가 있는데 jedis의 여러 메소드가 deprecated가 되어서 여기서는 lettuce를 사용하였다.
+
+#### Redis 
+```java
+@Component
+public class RedisService {
+    private final RedisTemplate<String, String> redisTemplate;
+
+    public RedisDao(RedisTemplate<String, String> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
+    public void setValue(String key, String data, Duration duration) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        values.set(key, data, duration);
+    }
+    
+    public boolean ExistToken(String email){
+        return redisTemplate.opsForValue().get(email) != null ? true : false;
+    }
+
+    public String getValue(String key) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        return values.get(key);
+    }
+
+    public void deleteValue(String key) {
+        redisTemplate.delete(key);
+    }
+}
+```
+
+RedisService는 기본적으로 데이터 추가, 데이터 가져오기, 데이터 삭제, 데이터 유무 확인 메소드로 구성하였다.
+처음에는 프로젝트를 진행하면서 JWT를 여러 개발블로그나 GIT을 참고하였는데 대부분 Redis를 사용하여 rtk를 관리하는 모습이 보였다. 진행 당시에는 나 또한 Redis를 사용하였지만 후에 Redis에 대해 학습을 하였고 내용을 개발블로그에 기록하였다.
+
+Redis 학습 - https://velog.io/@gcael/Redis
+
 - ### JWT 인증
-이번 프로젝트에서는 로그인 인증에 대해 JWT 토큰이라는 기술을 사용해보았다. 기존 쿠키나 세션을 사용하는 방법이 JWT 토큰보다 비교적 간단하였지만 이번 기회에 JWT에 대해서 공부를 하기 위해서 채택되었다.
+이번 프로젝트에서는 로그인 인증에 대해 JWT 토큰이라는 기술을 사용해보았다. 기존 쿠키나 세션을 사용하는 방법이 JWT 토큰보다 비교적 간단하였지만 이번 기회에 JWT에 대해서 공부를 하기 위해서 선택하였다.
 
 
 이번 JWT 토큰을 사용하면서 쿠키와 세션에 대해서도 자세히 학습해보고 JWT 토큰에 대해서도 알아보았던 내용을 개발블로그에 기록하였다.
@@ -104,6 +172,6 @@ JWT 인증 다음으로 정말 어려웠던 내용이었다. 처음에는 WebSec
 
 JWT 학습 - 
 
-- ### Redis
+
 
 
