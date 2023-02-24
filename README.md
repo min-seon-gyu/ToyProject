@@ -96,7 +96,9 @@ JWT 인증 다음으로 정말 어려웠던 내용이었다. 처음에는 WebSec
 ```
 
 - ### Redis
+JWT 토큰 방식을 활용하면서 보안성을 더 높이기 위해 Refresh Token(이하 rtk)을 만들어 관리를 하기로 했다. rtk를 관리하는 장소로 Redis를 활용해보았다.
 
+// Redis 환경 설정
 ```java
 @Configuration
 public class RedisConfig {
@@ -132,21 +134,21 @@ public class RedisDao {
         this.redisTemplate = redisTemplate;
     }
 
-    public void setValues(String key, String data, Duration duration) {
+    public void setValue(String key, String data, Duration duration) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         values.set(key, data, duration);
     }
-
+    
     public boolean ExistToken(String email){
         return redisTemplate.opsForValue().get(email) != null ? true : false;
     }
 
-    public String getValues(String key) {
+    public String getValue(String key) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         return values.get(key);
     }
 
-    public void deleteValues(String key) {
+    public void deleteValue(String key) {
         redisTemplate.delete(key);
     }
 }
