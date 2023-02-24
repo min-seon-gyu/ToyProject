@@ -1,6 +1,6 @@
 package com.WebProject.jwt;
 
-import com.WebProject.Dao.RedisDao;
+import com.WebProject.Redis.RedisService;
 import com.WebProject.Member.MemberResponse;
 import com.WebProject.exception.ForbiddenException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,7 +22,7 @@ import java.util.Objects;
 public class JwtTokenProvider {
 
     private final ObjectMapper objectMapper;
-    private final RedisDao redisDao;
+    private final RedisService redisService;
     @Value("${spring.jwt.key")
     private String key;
     @Value("${spring.jwt.live.atk}")
@@ -50,19 +50,19 @@ public class JwtTokenProvider {
                 new Date().getTime());
         String atk = createToken(atkSubject, atkLive);
         String rtk = createToken(rtkSubject, rtkLive);
-        redisDao.setValues(memberResponse.getEmail(), rtk, Duration.ofMillis(rtkLive));
+        redisService.setValue(memberResponse.getEmail(), rtk, Duration.ofMillis(rtkLive));
         return new TokenResponse(atk, rtk);
     }
 
     public boolean existToken(String key) throws JsonProcessingException{
-        return redisDao.ExistToken(key);
+        return redisService.ExistToken(key);
     }
 
     public boolean deleteToken(String atk, String email, Long time) throws JsonProcessingException{
-        if(redisDao.ExistToken(email)){
-            redisDao.deleteValues(email);
+        if(redisService.ExistToken(email)){
+            redisService.deleteValue(email);
             long leftTime = atkLive - (new Date().getTime() - time);
-            redisDao.setValues(atk, "logout", Duration.ofMillis(leftTime));
+            redisService.setValue(atk, "logout", Duration.ofMillis(leftTime));
             return true;
         }
         return false;
@@ -87,7 +87,7 @@ public class JwtTokenProvider {
     }
 
     public TokenResponse reissueAtk(MemberResponse memberResponse) throws JsonProcessingException {
-        String rtkInRedis = redisDao.getValues(memberResponse.getEmail());
+        String rtkInRedis = redisService.getValue(memberResponse.getEmail());
         if (Objects.isNull(rtkInRedis)) throw new ForbiddenException("인증 정보가 만료되었습니다.");
         Subject atkSubject = Subject.atk(
                 memberResponse.getEmail(),
