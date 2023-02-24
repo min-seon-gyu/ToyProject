@@ -58,7 +58,7 @@ AWS EC2 인스턴스를 생성 및 설정 과정은 다음과 같다.
 
 https://velog.io/@gcael/CORS
 
-- ### 시큐리티
+- ### Spring Security
 JWT 인증 다음으로 정말 어려웠던 내용이었다. 처음에는 WebSecurityConfigurerAdapter 클래스를 상속을 받아서 구현을 하려고 했지만 해당 클래스가 Deprecated가 되어서 사용을 할 수가 없었다. 대신 Spring Security 공식문서에 SecurityFilterChain 클래스를 사용한 예시가 있어서 참고를 하여 구현을 해보았다.
 
 ```java
@@ -98,7 +98,7 @@ JWT 인증 다음으로 정말 어려웠던 내용이었다. 처음에는 WebSec
 - ### Redis
 JWT 토큰 방식을 활용하면서 보안성을 더 높이기 위해 Refresh Token(이하 rtk)을 만들어 관리를 하기로 했다. rtk를 관리하는 장소로 Redis를 활용해보았다.
 
-// Redis 환경 설정
+#### Redis 환경 설정
 ```java
 @Configuration
 public class RedisConfig {
@@ -124,10 +124,10 @@ public class RedisConfig {
 }
 ```
 
-
+#### Redis 
 ```java
 @Component
-public class RedisDao {
+public class RedisService {
     private final RedisTemplate<String, String> redisTemplate;
 
     public RedisDao(RedisTemplate<String, String> redisTemplate) {
