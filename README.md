@@ -76,7 +76,7 @@ JWT 인증 다음으로 정말 어려웠던 내용이었다. 처음에는 WebSec
                 .and()
                 .authorizeRequests()
                 .antMatchers("/member/join", "/member/login").permitAll() // 로그인, 회원가입만 허용
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Preflight 요청 허용
                 .anyRequest().authenticated() // 그 외에는 인증된 유저만 허용
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, memberDetailsService),
@@ -124,6 +124,9 @@ public class RedisConfig {
 }
 ```
 
+RedisTemplate 클래스는 Spring 공식문서에 따르면 Redis 데이터 액세스 코드를 단순화하는 도우미 클래스입니다. RedisTemplate를 Bean으로 등록하고
+키, 벨류에 대한 직렬화를 String으로 해줍니다. 그리고 setConnectionFactory은 jedis와 lettuce가 있는데 jedis의 여러 메소드가 deprecated가 되어서 여기서는 lettuce를 사용하였다.
+
 #### Redis 
 ```java
 @Component
@@ -154,9 +157,13 @@ public class RedisService {
 }
 ```
 
+RedisService는 기본적으로 데이터 추가, 데이터 가져오기, 데이터 삭제, 데이터 유무 확인 메소드로 구성하였다.
+처음에는 프로젝트를 진행하면서 JWT를 여러 개발블로그나 GIT을 참고하였는데 대부분 Redis를 사용하여 rtk를 관리하는 모습이 보였다. 진행 당시에는 나 또한 Redis를 사용하였지만 후에 Redis에 대해 학습을 하였고 내용을 개발블로그에 기록하였다.
+
+Redis 학습 - https://velog.io/@gcael/Redis
 
 - ### JWT 인증
-이번 프로젝트에서는 로그인 인증에 대해 JWT 토큰이라는 기술을 사용해보았다. 기존 쿠키나 세션을 사용하는 방법이 JWT 토큰보다 비교적 간단하였지만 이번 기회에 JWT에 대해서 공부를 하기 위해서 채택되었다.
+이번 프로젝트에서는 로그인 인증에 대해 JWT 토큰이라는 기술을 사용해보았다. 기존 쿠키나 세션을 사용하는 방법이 JWT 토큰보다 비교적 간단하였지만 이번 기회에 JWT에 대해서 공부를 하기 위해서 선택하였다.
 
 
 이번 JWT 토큰을 사용하면서 쿠키와 세션에 대해서도 자세히 학습해보고 JWT 토큰에 대해서도 알아보았던 내용을 개발블로그에 기록하였다.
