@@ -169,6 +169,7 @@ Redis 학습 - https://velog.io/@gcael/Redis
 이번 JWT 토큰을 사용하면서 쿠키와 세션에 대해서도 자세히 학습해보고 개발블로그에 기록하였다.
 
 쿠키, 세션 학습 - https://velog.io/@gcael/%EC%BF%A0%ED%82%A4%EC%99%80-%EC%84%B8%EC%85%98
+JWT 학습 - https://velog.io/@gcael/JWT-%EC%9E%85%EB%AC%B8
 
 
 
