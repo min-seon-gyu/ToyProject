@@ -54,7 +54,8 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 역시 사용하지 않습니다.
                 .and()
                 .authorizeRequests()
-                .antMatchers("/member/join", "/member/login").permitAll()
+                .antMatchers("/member", "/member/login", "/member/findEmail", "/member/findPassword", "/store", "/store/all"
+                , "/store/name", "/store/address", "/store/type").permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().authenticated()
                 .and()

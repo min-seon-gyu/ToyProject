@@ -1,9 +1,11 @@
 package com.WebProject.Member;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 
 public class MemberResponse {
 
@@ -16,13 +18,6 @@ public class MemberResponse {
     @ApiModelProperty(example = "연락처")
     private String number;
 
-
-    private MemberResponse(String email, String name, String rrn, String number) {
-        this.email = email;
-        this.name = name;
-        this.number = number;
-        this.rrn = rrn;
-    }
 
     public static MemberResponse of(Member member) {
         return new MemberResponse(

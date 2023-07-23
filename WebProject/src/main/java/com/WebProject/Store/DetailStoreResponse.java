@@ -3,14 +3,12 @@ package com.WebProject.Store;
 import com.WebProject.comment.CommentResponse;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Data
 @Builder
+@Getter
 public class DetailStoreResponse {
 
     @ApiModelProperty(example = "상점 데이터")

@@ -14,7 +14,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -42,9 +41,8 @@ public class CommentService {
     @Modifying
     @Transactional
     public void removeComment(CommentRemoveRequest commentRemoveRequest){
-        if(commentRepository.findById(commentRemoveRequest.getAno()).get() == null){
-            throw new BadRequestException("존재하지 않는 댓글 id 입니다.");
-        }
+        commentRepository.findById(commentRemoveRequest.getAno()).orElseThrow(
+                () -> new BadRequestException("존재하지 않는 댓글 id 입니다."));
         commentRepository.deleteById(commentRemoveRequest.getAno());
     }
 

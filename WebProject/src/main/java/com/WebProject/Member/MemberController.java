@@ -27,7 +27,7 @@ public class MemberController {
 
     // 회원가입
     @ApiOperation(value = "회원가입 기능", notes = "회원가입 API",response = MemberResponse.class)
-    @PostMapping("/member/join")
+    @PostMapping("/member")
     public MemberResponse join(
             @ApiParam(value = "이메일, 패스워드, 이름, 주민등록번호, 연락처", required = true)
             @RequestBody SignUpRequest signUpRequest) {
@@ -67,44 +67,33 @@ public class MemberController {
 
     @ApiOperation(value = "로그아웃 기능", notes = "로그아웃 API")
     @GetMapping("/member/logout")
-    public String logout(
-            @RequestHeader(value = "Authorization") String header
-    ) throws JsonProcessingException {
-        if (!Objects.isNull(header)) {
-            String atk = header.substring(7);
-            Subject subject = jwtTokenProvider.getSubject(atk);
-            if(jwtTokenProvider.deleteToken(atk, subject.getEmail(), subject.getDate())){
-                log.info("로그아웃 - [Result]:True");
-                return "로그아웃에 성공하였습니다.";
-            }
-        }
-        else{
+    public void logout(@AuthenticationPrincipal MemberDetails memberDetails){
+        MemberResponse memberResponse = MemberResponse.of(memberDetails.getMember());
+        if(jwtTokenProvider.deleteToken(memberResponse.getEmail())){
+            log.info("로그아웃 - [Result]:True");
+        }else{
             log.info("로그아웃 - [Result]:False");
-            throw new NullPointerException();
         }
-        return "로그아웃에 실패하였습니다.";
     }
 
     @ApiOperation(value = "회원 정보 기능", notes = "회원 정보 API")
-    @GetMapping("/member/info")
-    public MemberResponse info(
-            @AuthenticationPrincipal MemberDetails memberDetails){
+    @GetMapping("/member")
+    public MemberResponse info(@AuthenticationPrincipal MemberDetails memberDetails){
             MemberResponse memberResponse = MemberResponse.of(memberDetails.getMember());
             log.info("회원 정보 - [Email]:{}, [Name]:{}, [Number]:{}, [RRN]:{}", memberResponse.getEmail(), memberResponse.getName(), memberResponse.getNumber(), memberResponse.getRrn());
             return memberResponse;
     }
 
     @ApiOperation(value = "회원 탈퇴 기능", notes = "회원 탈퇴 API")
-    @PostMapping("/member/delete")
-    public boolean delete(
-            @AuthenticationPrincipal MemberDetails memberDetails){
+    @DeleteMapping("/member")
+    public boolean delete(@AuthenticationPrincipal MemberDetails memberDetails){
             memberService.delete(memberDetails.getMember());
             log.info("회원 탈퇴 - [EMAIL]:{}", memberDetails.getMember().getEmail());
             return true;
     }
 
     @ApiOperation(value = "회원 수정 기능", notes = "회원 수정  API",response = MemberResponse.class)
-    @PutMapping("/member/update")
+    @PatchMapping("/member")
     public MemberResponse update(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @ApiParam(value = "이메일, 이름, 주민등록번호, 연락처", required = true)
@@ -115,12 +104,12 @@ public class MemberController {
     }
 
     @ApiOperation(value = "회원 비밀번호 수정 기능", notes = "회원 수정  API",response = MemberResponse.class)
-    @PutMapping("/member/pwUpdate")
+    @PatchMapping("/member/pwUpdate")
     public MemberResponse pwUpdate(
             @ApiParam(value = "비밀번호", required = true)
             @RequestBody PasswordUpdateRequest PasswordUpdateRequest){
-        log.info("회원 수정 - [EMAIL]:{}", PasswordUpdateRequest.getEmail());
         MemberResponse memberResponse = memberService.passwordUpdate(PasswordUpdateRequest);
+        log.info("회원 수정 - [EMAIL]:{}", PasswordUpdateRequest.getEmail());
         return memberResponse;
     }
 
@@ -134,21 +123,4 @@ public class MemberController {
         log.info("Access Token 재발급 - [Email]:{}", memberResponse.getEmail());
         return jwtTokenProvider.reissueAtk(memberResponse);
     }
-
-    @ApiOperation(value = "전체 회원 정보 기능", notes = "전체 회원 정보 API")
-    @GetMapping("/member/findAll")
-    public List<Member> findAll() {
-        List<Member> result = memberService.findAll();
-        log.info("전체 회원 : {}", result);
-        return result;
-    }
-
-    @ApiOperation(value = "전체 회원 수 기능", notes = "전체 회원 수 API")
-    @GetMapping("/member/totalCount")
-    public Long totalCount() {
-        Long result = memberService.totalCount();
-        log.info("전체 회원 수 : {}", result);
-        return result;
-    }
-
 }

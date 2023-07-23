@@ -49,7 +49,7 @@ public class MemberService {
                 .number(signUpRequest.getNumber())
                 .build();
 
-        member = memberRepository.save(member);
+        memberRepository.save(member);
         return MemberResponse.of(member);
     }
 
@@ -82,11 +82,6 @@ public class MemberService {
                 .existsByEmailAndNameAndRrn(findPasswordRequest.getEmail(), findPasswordRequest.getName(), findPasswordRequest.getFrontRrn()+"-"+findPasswordRequest.getBackRrn());
 
         return isValid;
-    }
-
-    @Transactional(readOnly = true)
-    public List<Member> findAll(){
-        return memberRepository.findAll();
     }
 
     @Transactional(readOnly = false)
@@ -122,11 +117,6 @@ public class MemberService {
             selectMember = memberRepository.save(selectMember);
         });
         return MemberResponse.of(member.get());
-    }
-
-    @Transactional(readOnly = true)
-    public Long totalCount(){
-        return memberRepository.count();
     }
 
     @Transactional(readOnly = false)

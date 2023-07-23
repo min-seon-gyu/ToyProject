@@ -6,12 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class ScoreRequest {
 
     @ApiModelProperty(example = "상점 id")
     private Long id;
     @ApiModelProperty(example = "평점")
-    private Double score;
+    private int score;
 }

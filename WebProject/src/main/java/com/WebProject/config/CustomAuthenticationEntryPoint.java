@@ -1,6 +1,5 @@
 package com.WebProject.config;
 
-import com.WebProject.exception.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -29,9 +28,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        Message message = new Message(exceptionMessage, HttpStatus.UNAUTHORIZED);
-        String res = this.convertObjectToJson(message);
-        response.getWriter().print(res);
     }
 
     private String convertObjectToJson(Object object) throws JsonProcessingException {

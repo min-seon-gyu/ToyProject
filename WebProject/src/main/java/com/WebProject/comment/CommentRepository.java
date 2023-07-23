@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    @Query(value = "SELECT count(*) FROM store where id=:id limit 1", nativeQuery = true)
+    @Query(value = "SELECT count(*) FROM store where id=:id", nativeQuery = true)
     Long existByStoreId(@Param("id")Long id);
 
     @Query(value = "select ano, id, email, content, write_time from comment where id = :id", nativeQuery = true)

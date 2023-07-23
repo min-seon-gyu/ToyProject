@@ -2,7 +2,7 @@ package com.WebProject.jwt;
 
 import com.WebProject.Redis.RedisService;
 import com.WebProject.Member.MemberResponse;
-import com.WebProject.exception.ForbiddenException;
+import com.WebProject.exception.BadRequestException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
@@ -54,15 +54,13 @@ public class JwtTokenProvider {
         return new TokenResponse(atk, rtk);
     }
 
-    public boolean existToken(String key) throws JsonProcessingException{
+    public boolean existToken(String key){
         return redisService.ExistToken(key);
     }
 
-    public boolean deleteToken(String atk, String email, Long time) throws JsonProcessingException{
-        if(redisService.ExistToken(email)){
-            redisService.deleteValue(email);
-            long leftTime = atkLive - (new Date().getTime() - time);
-            redisService.setValue(atk, "logout", Duration.ofMillis(leftTime));
+    public boolean deleteToken(String key){
+        if(redisService.ExistToken(key)){
+            redisService.deleteValue(key);
             return true;
         }
         return false;
@@ -88,7 +86,7 @@ public class JwtTokenProvider {
 
     public TokenResponse reissueAtk(MemberResponse memberResponse) throws JsonProcessingException {
         String rtkInRedis = redisService.getValue(memberResponse.getEmail());
-        if (Objects.isNull(rtkInRedis)) throw new ForbiddenException("인증 정보가 만료되었습니다.");
+        if (Objects.isNull(rtkInRedis)) throw new BadRequestException("인증 정보가 만료되었습니다.");
         Subject atkSubject = Subject.atk(
                 memberResponse.getEmail(),
                 memberResponse.getName(),

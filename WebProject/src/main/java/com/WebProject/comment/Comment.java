@@ -1,16 +1,16 @@
 package com.WebProject.comment;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-
 import javax.persistence.*;
-import java.util.Date;
 
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
 @DynamicUpdate
 public class Comment {

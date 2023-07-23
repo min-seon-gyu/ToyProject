@@ -11,10 +11,10 @@ import javax.persistence.Id;
 import java.util.Collection;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Setter
 @Entity
 @DynamicUpdate
 public class Store implements UserDetails {

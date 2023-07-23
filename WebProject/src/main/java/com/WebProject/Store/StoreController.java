@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Api(tags = {"상점관련 API"})
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class StoreController {
@@ -25,10 +24,10 @@ public class StoreController {
     private final CommentService commentService;
 
     @ApiOperation(value = "상점 정보 기능", notes = "상점 정보 API")
-    @GetMapping("/store/id")
+    @GetMapping("/store")
     public DetailStoreResponse getStoreById(
             @ApiParam(value = "상점 Id", required = true)
-            @RequestParam (name="id") Long id,
+            @RequestParam Long id,
             @AuthenticationPrincipal MemberDetails memberDetails){
         String email = "None";
         if(memberDetails != null){
@@ -42,33 +41,37 @@ public class StoreController {
     @GetMapping("/store/all")
     public ListStoreResponse getStoreAll(){
         List<Store> list = storeService.getListAll();
-        return ListStoreResponse.builder().list(StoreResponse.of(list)).count(storeService.totalCount()).build();
+        Long count = storeService.totalCount();
+        return ListStoreResponse.builder().list(StoreResponse.of(list)).count(count).build();
     }
 
     @ApiOperation(value = "상점 구별 리스트 기능", notes = "상점 구별 리스트 API")
     @GetMapping("/store/address")
     public ListStoreResponse getStoreByAddress(
-            @ApiParam(value = "동구 : Dong-gu, 서구 : Seo-gu, 중구 : Jung-gu, 유성구 : Yuseong-gu, 대덕구 : Daedeok-gu", required = true)
-            @RequestParam (name = "address") String address){
-        List<Store> list = storeService.getListByAddress(address);
-        return ListStoreResponse.builder().list(StoreResponse.of(list)).count(storeService.getListByAddressCount(address)).build();
+            @ApiParam(value = "동구 : Dong_gu, 서구 : Seo_gu, 중구 : Jung_gu, 유성구 : Yuseong_gu, 대덕구 : Daedeok_gu", required = true)
+            @RequestParam AddressType type){
+        List<Store> list = storeService.getListByAddress(type);
+        Long count = storeService.getListByAddressCount(type);
+        return ListStoreResponse.builder().list(StoreResponse.of(list)).count(count).build();
     }
 
     @ApiOperation(value = "상점 타입별 리스트 기능", notes = "상점 타입별 리스트 API")
     @GetMapping("/store/type")
     public ListStoreResponse getStoreByType(
             @ApiParam(value = "한식 : Korean, 양식 : Western, 중식 : Chinese, 일식 : Japanese, 디저트 : Dessert, 분식 : Snack", required = true)
-            @RequestParam (name = "type") String type){
+            @RequestParam StoreType type){
         List<Store> list = storeService.getListByType(type);
-        return ListStoreResponse.builder().list(StoreResponse.of(list)).count(storeService.getListByTypeCount(type)).build();
+        Long count = storeService.getListByTypeCount(type);
+        return ListStoreResponse.builder().list(StoreResponse.of(list)).count(count).build();
     }
 
     @ApiOperation(value = "상점 이름 검색 기능", notes = "상점 이름 검색 API")
     @GetMapping("/store/name")
     public ListStoreResponse getStoreByName(
             @ApiParam(value = "상점 이름", required = true)
-            @RequestParam (name = "name") String name){
+            @RequestParam String name){
         List<Store> list = storeService.getListByName(name);
-        return ListStoreResponse.builder().list(StoreResponse.of(list)).count(storeService.getListByNameCount(name)).build();
+        Long count = storeService.getListByNameCount(name);
+        return ListStoreResponse.builder().list(StoreResponse.of(list)).count(count).build();
     }
 }

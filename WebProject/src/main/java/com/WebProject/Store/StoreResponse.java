@@ -1,13 +1,15 @@
 package com.WebProject.Store;
 
-import com.WebProject.Member.Member;
-import com.WebProject.Member.MemberResponse;
+
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
+@AllArgsConstructor
 @Getter
 public class StoreResponse {
     @ApiModelProperty(example = "Id")
@@ -31,18 +33,6 @@ public class StoreResponse {
     @ApiModelProperty(example = "평점")
     private Double score;
 
-    public StoreResponse(Long id, String name, String address, String tell, String operating_time, String type, String representative_menu, Double lat, Double lon, Double score) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.tell = tell;
-        this.operating_time = operating_time;
-        this.type = type;
-        this.representative_menu = representative_menu;
-        this.lat = lat;
-        this.lon = lon;
-        this.score = score;
-    }
 
     public static StoreResponse of(Store store) {
         if(store.getScore() == null){

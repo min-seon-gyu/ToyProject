@@ -6,10 +6,9 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @DynamicUpdate
 public class Score {
@@ -20,5 +19,5 @@ public class Score {
     @Column(nullable = false)
     private Long id;
 
-    private Double score;
+    private int score;
 }

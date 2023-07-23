@@ -2,12 +2,14 @@ package com.WebProject.comment;
 
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class CommentResponse {
 
     @ApiModelProperty(example = "Id")
@@ -25,13 +27,6 @@ public class CommentResponse {
     @ApiModelProperty(example = "작성유무")
     private Boolean canDelete;
 
-    public CommentResponse(Long ano, String name, String content, String writeTime, Boolean canDelete) {
-        this.ano = ano;
-        this.name = name;
-        this.content = content;
-        this.writeTime = writeTime;
-        this.canDelete = canDelete;
-    }
 
     public static CommentResponse of(Comment comment, String email){
         Boolean canDelete = email.equals(comment.getEmail());

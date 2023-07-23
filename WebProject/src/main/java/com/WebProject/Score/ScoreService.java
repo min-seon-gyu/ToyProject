@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ScoreService {
 
     private final  ScoreRepository scoreRepository;
@@ -17,7 +16,8 @@ public class ScoreService {
         if(scoreRepository.existByStoreId(scoreRequest.getId()) == 0){
             throw new BadRequestException("존재하지 않는 상점 id입니다.");
         }
-        if(scoreRequest.getScore() > 5  || scoreRequest.getScore() < 0 ){
+        int score = scoreRequest.getScore();
+        if(score > 5  || score < 0 ){
             throw new BadRequestException("올바른 점수가 아닙니다.");
         }
         scoreRepository.save(Score.builder().id(scoreRequest.getId()).score(scoreRequest.getScore()).build());
