@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class FindPasswordRequest {
     @ApiModelProperty(example = "이메일")
     private String email;
