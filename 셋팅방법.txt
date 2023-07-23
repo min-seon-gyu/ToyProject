@@ -44,15 +44,3 @@ xshell 설치 및 가상 서버 접근
 20201010
 CORS 에러 발생 Configuraror 해결 
 
-
-
-
-{
-   "email" : "email",
-   "password" : "password",
-   "name" : "name",
-   "birth" : "birth",
-   "number" : 1
-}
-
-
