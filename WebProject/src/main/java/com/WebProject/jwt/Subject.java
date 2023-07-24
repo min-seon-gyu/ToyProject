@@ -2,10 +2,12 @@ package com.WebProject.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 @AllArgsConstructor
 @Getter
+@NoArgsConstructor
 public class Subject {
 
     private static final String ATK = "ATK";

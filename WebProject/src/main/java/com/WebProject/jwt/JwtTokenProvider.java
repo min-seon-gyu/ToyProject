@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
+import java.net.http.HttpHeaders;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Base64;
@@ -53,13 +54,9 @@ public class JwtTokenProvider {
         return new TokenResponse(atk, rtk);
     }
 
-    public boolean existToken(String key){
-        return redisService.ExistToken(key);
-    }
-
     public boolean deleteToken(String key){
-        if(redisService.ExistToken(key)){
-            redisService.deleteValue(key);
+        if(redisService.Exist(key)){
+            redisService.delete(key);
             return true;
         }
         return false;
@@ -83,15 +80,16 @@ public class JwtTokenProvider {
         return objectMapper.readValue(subjectStr, Subject.class);
     }
 
-    public TokenResponse reissueAtk(MemberResponse memberResponse) throws JsonProcessingException {
+    public TokenResponse reissueAtk(MemberResponse memberResponse, String value) throws JsonProcessingException {
         String rtkInRedis = redisService.getValue(memberResponse.getEmail());
         if (Objects.isNull(rtkInRedis)) throw new BadRequestException("인증 정보가 만료되었습니다.");
-        Subject atkSubject = Subject.atk(
-                memberResponse.getEmail(),
-                memberResponse.getName(),
-                new Date().getTime());
-        String atk = createToken(atkSubject, atkLive);
-        return new TokenResponse(atk, null);
-    }
 
+        if(rtkInRedis.equals(value.substring(7))){
+            redisService.delete(memberResponse.getEmail());
+            TokenResponse tokenResponse = createTokensByLogin(memberResponse);
+            return tokenResponse;
+        }else{
+            throw new BadRequestException("헤더 정보가 일치하지 않습니다.");
+        }
+    }
 }

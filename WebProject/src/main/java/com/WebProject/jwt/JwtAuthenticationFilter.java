@@ -32,10 +32,6 @@ public class JwtAuthenticationFilter extends  OncePerRequestFilter  {
             String atk = authorization.substring(7);
             try {
                 Subject subject = jwtTokenProvider.getSubject(atk);
-                String requestURI = request.getRequestURI();
-                if (jwtTokenProvider.existToken(atk)) {
-                    throw new JwtException("토큰을 확인하세요.");
-                }
                 UserDetails userDetails = memberDetailsService.loadUserByUsername(subject.getEmail());
                 Authentication token = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(token);

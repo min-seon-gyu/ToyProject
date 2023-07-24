@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpHeaders;
+
 @Api(tags = {"회원관련 API"})
 @Slf4j
 @RestController
@@ -101,10 +103,11 @@ public class MemberController {
     @ApiOperation(value = "Access Token 재발급 기능", notes = "Access Token 재발급 API", response = TokenResponse.class)
     @GetMapping("/member/reissue")
     public TokenResponse reissue(
-            @AuthenticationPrincipal MemberDetails memberDetails
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @RequestHeader(value ="Authorization") String value
     ) throws JsonProcessingException {
         MemberResponse memberResponse = MemberResponse.of(memberDetails.getMember());
         log.info("Access Token 재발급 - [Email]:{}", memberResponse.getEmail());
-        return jwtTokenProvider.reissueAtk(memberResponse);
+        return jwtTokenProvider.reissueAtk(memberResponse, value);
     }
 }

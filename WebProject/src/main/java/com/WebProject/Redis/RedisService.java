@@ -12,21 +12,21 @@ import java.time.Duration;
 public class RedisService {
     private final RedisTemplate<String, String> redisTemplate;
 
-    public void setValue(String key, String data, Duration duration) {
-        ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set(key, data, duration);
-    }
-
-    public boolean ExistToken(String email){
-        return redisTemplate.opsForValue().get(email) != null ? true : false;
-    }
-
     public String getValue(String key) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         return values.get(key);
     }
 
-    public void deleteValue(String key) {
+    public void setValue(String key, String data, Duration duration) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        values.set(key, data, duration);
+    }
+
+    public boolean Exist(String email){
+        return redisTemplate.opsForValue().get(email) != null ? true : false;
+    }
+
+    public void delete(String key) {
         redisTemplate.delete(key);
     }
 }
