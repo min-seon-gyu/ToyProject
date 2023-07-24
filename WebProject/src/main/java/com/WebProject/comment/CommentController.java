@@ -1,16 +1,12 @@
 package com.WebProject.comment;
 
-import com.WebProject.Member.MemberDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = {"댓글관련 API"})
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class CommentController {

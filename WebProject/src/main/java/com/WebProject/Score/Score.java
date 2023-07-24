@@ -1,8 +1,6 @@
 package com.WebProject.Score;
 
 import lombok.*;
-import org.hibernate.annotations.DynamicUpdate;
-
 import javax.persistence.*;
 
 @Getter

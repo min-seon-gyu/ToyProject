@@ -1,36 +1,15 @@
 package com.WebProject.Member;
 
 import com.WebProject.exception.BadRequestException;
-import com.WebProject.jwt.Subject;
-import io.jsonwebtoken.JwtException;
-import io.netty.util.Constant;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.SelectBeforeUpdate;
-import org.hibernate.annotations.common.util.impl.Log;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.authentication.PasswordEncoderParser;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
-import java.io.Console;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -93,7 +72,6 @@ public class MemberService {
 
     @Transactional
     public MemberResponse update(String email, UpdateRequest updateRequest){
-        System.out.println("asdasdasdasd");
         Member member = em.find(Member.class, email);
         member.setName(updateRequest.getName());
         member.setNumber(updateRequest.getNumber());

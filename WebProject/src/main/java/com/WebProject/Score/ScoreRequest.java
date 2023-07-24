@@ -1,9 +1,7 @@
 package com.WebProject.Score;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class ScoreRequest {

@@ -1,6 +1,5 @@
 package com.WebProject.Member;
 
-import com.WebProject.jwt.Subject;
 import com.WebProject.jwt.TokenResponse;
 import com.WebProject.jwt.JwtTokenProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,10 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Api(tags = {"회원관련 API"})
 @Slf4j

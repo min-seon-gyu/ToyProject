@@ -1,6 +1,5 @@
 package com.WebProject.Member;
 
-import com.WebProject.Member.Member;
 import lombok.Getter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

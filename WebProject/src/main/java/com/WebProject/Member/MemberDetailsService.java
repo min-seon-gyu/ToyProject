@@ -1,8 +1,5 @@
 package com.WebProject.Member;
 
-import com.WebProject.Member.Member;
-import com.WebProject.Member.MemberDetails;
-import com.WebProject.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

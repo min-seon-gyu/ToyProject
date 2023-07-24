@@ -1,18 +1,11 @@
 package com.WebProject.jwt;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
-
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class Subject {
 
     private static final String ATK = "ATK";
