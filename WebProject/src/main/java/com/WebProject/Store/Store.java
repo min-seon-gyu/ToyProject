@@ -38,7 +38,7 @@ public class Store{
 
     private Double lon;
 
-    private double score;
+    private Double score;
 
 
 }
