@@ -1,14 +1,8 @@
 package com.WebProject.Store;
 
-import com.WebProject.Member.FindEmailRequest;
-import com.WebProject.Member.Member;
-import com.WebProject.Member.MemberResponse;
-import com.WebProject.comment.Comment;
+
 import com.WebProject.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,7 +93,7 @@ public class StoreService {
         else if(type.equals(StoreType.Western)){
             result = "양식";
         }
-        else if(type.equals(StoreType.Western)){
+        else if(type.equals(StoreType.Chinese)){
             result = "중식";
         }
         else if(type.equals(StoreType.Japanese)){

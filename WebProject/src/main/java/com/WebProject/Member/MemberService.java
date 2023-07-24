@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Console;
 import java.util.Date;
@@ -33,6 +34,7 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EntityManager em;
 
     @Transactional
     public MemberResponse signUp(SignUpRequest signUpRequest) {
@@ -49,22 +51,21 @@ public class MemberService {
                 .number(signUpRequest.getNumber())
                 .build();
 
-        memberRepository.save(member);
+        em.persist(member);
         return MemberResponse.of(member);
     }
 
     @Transactional(readOnly = true)
     public MemberResponse login(LoginRequest loginRequest) {
-        Member Member = memberRepository
-                .findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new BadRequestException("이메일 혹은 비밀번호를 확인하세요."));
+        Member member = em.find(Member.class, loginRequest.getEmail());
+        if(member == null) throw new BadRequestException("이메일 혹은 비밀번호를 확인하세요.");
 
         boolean matches = passwordEncoder.matches(
                 loginRequest.getPassword(),
-                Member.getPassword());
+                member.getPassword());
         if (!matches) throw new BadRequestException("이메일 혹은 비밀번호를 확인하세요.");
 
-        return MemberResponse.of(Member);
+        return MemberResponse.of(member);
     }
 
     @Transactional(readOnly = true)
@@ -81,58 +82,26 @@ public class MemberService {
         boolean isValid = memberRepository
                 .existsByEmailAndNameAndRrn(findPasswordRequest.getEmail(), findPasswordRequest.getName(), findPasswordRequest.getFrontRrn()+"-"+findPasswordRequest.getBackRrn());
 
+        if(!isValid) new BadRequestException("이메일 혹은 이름 혹은 주민등록번호를 확인하세요.");
         return isValid;
     }
 
-    @Transactional(readOnly = false)
+    @Transactional
     public void delete(Member member){
-        memberRepository.delete(member);
+        em.remove(member);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional
     public MemberResponse update(String email, UpdateRequest updateRequest){
-
-        Optional<Member> member = memberRepository.findByEmail(email);
-
-        member.ifPresent(selectMember -> {
-            selectMember.setEmail(updateRequest.getEmail());
-
-            if(updateRequest.getName() != null){
-                selectMember.setName(updateRequest.getName());
-            }
-
-            if(updateRequest.getNumber() != null){
-                selectMember.setNumber(updateRequest.getNumber());
-            }
-
-            if(updateRequest.getFrontRrn() != null && updateRequest.getBackRrn() != null){
-                selectMember.setRrn(updateRequest.getFrontRrn() + "-" + updateRequest.getBackRrn());
-            }
-
-            if(updateRequest.getPassword() != null){
-                String encodedPassword = passwordEncoder.encode(updateRequest.getPassword());
-                selectMember.setPassword(encodedPassword);
-            }
-
-            selectMember = memberRepository.save(selectMember);
-        });
-        return MemberResponse.of(member.get());
-    }
-
-    @Transactional(readOnly = false)
-    public MemberResponse passwordUpdate(PasswordUpdateRequest passwordUpdateRequest) {
-        Optional<Member> member = memberRepository.findByEmail(passwordUpdateRequest.getEmail());
-
-        member.ifPresent(selectMember -> {
-            selectMember.setEmail(passwordUpdateRequest.getEmail());
-
-            if(passwordUpdateRequest.getPassword() != null){
-                String encodedPassword = passwordEncoder.encode(passwordUpdateRequest.getPassword());
-                selectMember.setPassword(encodedPassword);
-            }
-
-            selectMember = memberRepository.save(selectMember);
-        });
-        return MemberResponse.of(member.get());
+        System.out.println("asdasdasdasd");
+        Member member = em.find(Member.class, email);
+        member.setName(updateRequest.getName());
+        member.setNumber(updateRequest.getNumber());
+        member.setRrn(updateRequest.getFrontRrn() + "-" + updateRequest.getBackRrn());
+        if(updateRequest.getPassword() != null){
+            String encodedPassword = passwordEncoder.encode(updateRequest.getPassword());
+            member.setPassword(encodedPassword);
+        }
+        return MemberResponse.of(member);
     }
 }

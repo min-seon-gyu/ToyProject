@@ -13,7 +13,6 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@DynamicUpdate
 public class Member implements UserDetails {
 
     @Id

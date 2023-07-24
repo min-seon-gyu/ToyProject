@@ -103,17 +103,6 @@ public class MemberController {
             return memberResponse;
     }
 
-    @ApiOperation(value = "회원 비밀번호 수정 기능", notes = "회원 수정  API",response = MemberResponse.class)
-    @PatchMapping("/member/pwUpdate")
-    public MemberResponse pwUpdate(
-            @ApiParam(value = "비밀번호", required = true)
-            @RequestBody PasswordUpdateRequest PasswordUpdateRequest){
-        MemberResponse memberResponse = memberService.passwordUpdate(PasswordUpdateRequest);
-        log.info("회원 수정 - [EMAIL]:{}", PasswordUpdateRequest.getEmail());
-        return memberResponse;
-    }
-
-
     @ApiOperation(value = "Access Token 재발급 기능", notes = "Access Token 재발급 API", response = TokenResponse.class)
     @GetMapping("/member/reissue")
     public TokenResponse reissue(
