@@ -24,10 +24,18 @@ public class StoreService {
     public List<Store> getListAll(){
         return storeRepository.getListAll();
     }
-
     @Transactional(readOnly = true)
     public Long totalCount(){
         return storeRepository.count();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Store> getListByName(String name){
+        return storeRepository.getListByName(name);
+    }
+    @Transactional(readOnly = true)
+    public Long getListByNameCount(String name){
+        return storeRepository.getListByNameCount(name);
     }
 
     @Transactional(readOnly = true)
@@ -54,17 +62,8 @@ public class StoreService {
         return storeRepository.getListByTypeCount(result);
     }
 
-    @Transactional(readOnly = true)
-    public List<Store> getListByName(String name){
-        return storeRepository.getListByName(name);
-    }
-    @Transactional(readOnly = true)
-    public Long getListByNameCount(String name){
-        return storeRepository.getListByNameCount(name);
-    }
-
     private String getAddressString(AddressType type){
-        String result = null;
+        String result;
         if(type.equals(AddressType.Jung_gu)){
             result = "중구";
         }
@@ -86,7 +85,7 @@ public class StoreService {
     }
 
     private String getTypeString(StoreType type){
-        String result = null;
+        String result;
         if(type.equals(StoreType.Korean)){
             result = "한식";
         }

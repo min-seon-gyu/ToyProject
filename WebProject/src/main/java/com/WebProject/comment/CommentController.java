@@ -28,7 +28,7 @@ public class CommentController {
     @DeleteMapping("/comment")
     public void removeScore(
             @ApiParam(value = "CommentRequest", required = true)
-            @RequestBody CommentRemoveRequest commentRemoveRequest){
-        commentService.removeComment(commentRemoveRequest);
+            @RequestParam long id){
+        commentService.removeComment(id);
     }
 }

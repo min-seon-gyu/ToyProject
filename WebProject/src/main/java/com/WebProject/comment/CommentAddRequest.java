@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class CommentAddRequest {
     @ApiModelProperty(example = "상점 id")
-    private Long id;
+    private long id;
     @ApiModelProperty(example = "이메일")
     private String email;
     @ApiModelProperty(example = "내용")

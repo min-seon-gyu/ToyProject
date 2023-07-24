@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class ScoreRequest {
 
     @ApiModelProperty(example = "상점 id")
-    private Long id;
+    private long id;
     @ApiModelProperty(example = "평점")
-    private int score;
+    private int value;
 }

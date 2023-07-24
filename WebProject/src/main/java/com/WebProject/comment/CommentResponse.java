@@ -21,9 +21,6 @@ public class CommentResponse {
     @ApiModelProperty(example = "내용")
     private String content;
 
-    @ApiModelProperty(example = "작성시간")
-    private String writeTime;
-
     @ApiModelProperty(example = "작성유무")
     private Boolean canDelete;
 
@@ -34,7 +31,6 @@ public class CommentResponse {
                 comment.getAno(),
                 comment.getEmail(),
                 comment.getContent(),
-                comment.getWrite_time(),
                 canDelete
         );
     }

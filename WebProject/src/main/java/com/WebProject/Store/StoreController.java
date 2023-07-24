@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Api(tags = {"상점관련 API"})
 @RestController
@@ -20,8 +22,8 @@ import java.util.List;
 public class StoreController {
 
     private final StoreService storeService;
-
     private final CommentService commentService;
+
 
     @ApiOperation(value = "상점 정보 기능", notes = "상점 정보 API")
     @GetMapping("/store")
@@ -33,8 +35,8 @@ public class StoreController {
         if(memberDetails != null){
             email = memberDetails.getMember().getEmail();
         }
-        Store store = storeService.findStoreById(id).orElseThrow(() -> new BadRequestException("상점을 찾을 수 없습니다."));
-        return DetailStoreResponse.builder().storeResponse(StoreResponse.of(store)).list(CommentResponse.of(commentService.getLstComment(id), email)).build();
+        Optional<Store> store = storeService.findStoreById(id);
+        return DetailStoreResponse.builder().storeResponse(StoreResponse.of(store.get())).list(CommentResponse.of(commentService.getLstComment(id), email)).build();
     }
 
     @ApiOperation(value = "상점 전체 리스트 기능", notes = "상점 전체 리스트 API")

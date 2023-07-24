@@ -1,6 +1,7 @@
 package com.WebProject.comment;
 
 import com.WebProject.Member.MemberResponse;
+import com.WebProject.Store.Store;
 import com.WebProject.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -17,22 +19,17 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final EntityManager em;
 
     @Transactional
     public void addComment(CommentAddRequest commentRequest){
-        if(commentRepository.existByStoreId(commentRequest.getId()) == 0){
-            throw new BadRequestException("존재하지 않는 상점 id 입니다.");
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedNow = now.format(formatter);
+        Store store = em.find(Store.class, commentRequest.getId());
+        if(store == null) throw new BadRequestException("존재하지 않는 상점 id 입니다.");
 
         Comment comment = Comment.builder()
                 .id(commentRequest.getId())
                 .content(commentRequest.getContent())
                 .email(commentRequest.getEmail())
-                .write_time(formattedNow)
                 .build();
 
         commentRepository.save(comment);
@@ -40,10 +37,9 @@ public class CommentService {
 
     @Modifying
     @Transactional
-    public void removeComment(CommentRemoveRequest commentRemoveRequest){
-        commentRepository.findById(commentRemoveRequest.getAno()).orElseThrow(
-                () -> new BadRequestException("존재하지 않는 댓글 id 입니다."));
-        commentRepository.deleteById(commentRemoveRequest.getAno());
+    public void removeComment(long id){
+        Comment comment = em.find(Comment.class, id);
+        if(comment != null) em.remove(comment);
     }
 
     @Transactional(readOnly = true)

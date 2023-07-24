@@ -10,14 +10,13 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@DynamicUpdate
 public class Score {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ano;
+    private long ano;
 
     @Column(nullable = false)
-    private Long id;
+    private long id;
 
-    private int score;
+    private int value;
 }

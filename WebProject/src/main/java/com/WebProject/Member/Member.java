@@ -1,7 +1,6 @@
 package com.WebProject.Member;
 
 import lombok.*;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
