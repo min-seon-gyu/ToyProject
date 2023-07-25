@@ -1,6 +1,7 @@
 package com.WebProject.jwt;
 
 import com.WebProject.Member.MemberDetailsService;
+import com.WebProject.exception.BadRequestException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,6 +33,12 @@ public class JwtAuthenticationFilter extends  OncePerRequestFilter  {
             String atk = authorization.substring(7);
             try {
                 Subject subject = jwtTokenProvider.getSubject(atk);
+                String requestURI = request.getRequestURI();
+
+                if(subject.getType().equals("RTK") && !requestURI.equals("/member/reissue")){
+                    request.setAttribute("exception", "토큰을 다시 확인해주세요");
+                }
+
                 UserDetails userDetails = memberDetailsService.loadUserByUsername(subject.getEmail());
                 Authentication token = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(token);

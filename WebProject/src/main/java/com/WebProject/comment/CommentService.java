@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class CommentService {
     private final EntityManager em;
 
     @Transactional
-    public void addComment(CommentAddRequest commentRequest){
+    public CommentResponse addComment(CommentAddRequest commentRequest){
         Store store = em.find(Store.class, commentRequest.getId());
         if(store == null) throw new BadRequestException("존재하지 않는 상점 id 입니다.");
 
@@ -28,13 +29,18 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
+        return CommentResponse.of(comment, commentRequest.getEmail());
     }
 
     @Modifying
     @Transactional
-    public void removeComment(long id){
+    public boolean removeComment(long id){
         Comment comment = em.find(Comment.class, id);
-        if(comment != null) em.remove(comment);
+        if(!Objects.isNull(comment)){
+            em.remove(comment);
+            return true;
+        }
+        return false;
     }
 
     @Transactional(readOnly = true)
