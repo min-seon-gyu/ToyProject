@@ -2,6 +2,7 @@ package com.WebProject.jwt;
 
 import com.WebProject.Member.MemberDetailsService;
 import com.WebProject.exception.BadRequestException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,6 +43,8 @@ public class JwtAuthenticationFilter extends  OncePerRequestFilter  {
                 UserDetails userDetails = memberDetailsService.loadUserByUsername(subject.getEmail());
                 Authentication token = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(token);
+            } catch (ExpiredJwtException e) {
+                request.setAttribute("exception", e.getMessage());
             } catch (JwtException e) {
                 request.setAttribute("exception", e.getMessage());
             }
