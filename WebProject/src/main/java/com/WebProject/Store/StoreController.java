@@ -1,18 +1,15 @@
 package com.WebProject.Store;
 
-import com.WebProject.Member.MemberDetails;
+import com.WebProject.Member.Member;
 import com.WebProject.comment.CommentResponse;
 import com.WebProject.comment.CommentService;
-import com.WebProject.exception.BadRequestException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +27,8 @@ public class StoreController {
     public DetailStoreResponse getStoreById(
             @ApiParam(value = "상점 Id", required = true)
             @RequestParam Long id,
-            @AuthenticationPrincipal MemberDetails memberDetails){
-        String email = "None";
-        if(memberDetails != null){
-            email = memberDetails.getMember().getEmail();
-        }
+            @AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : member") Member member){
+        String email = member != null ? member.getEmail() : "None";
         Optional<Store> store = storeService.findStoreById(id);
         return DetailStoreResponse.builder().storeResponse(StoreResponse.of(store.get())).list(CommentResponse.of(commentService.getLstComment(id), email)).build();
     }

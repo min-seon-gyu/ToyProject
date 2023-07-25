@@ -1,7 +1,6 @@
 package com.WebProject.jwt;
 
-import com.WebProject.Member.MemberDetailsService;
-import com.WebProject.exception.BadRequestException;
+import com.WebProject.Member.UserMemberDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,9 +20,9 @@ public class JwtAuthenticationFilter extends  OncePerRequestFilter  {
 
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final MemberDetailsService memberDetailsService;
+    private final UserMemberDetailsService memberDetailsService;
 
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, MemberDetailsService memberDetailsService) {
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, UserMemberDetailsService memberDetailsService) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.memberDetailsService = memberDetailsService;
     }

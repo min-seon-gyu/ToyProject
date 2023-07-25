@@ -1,6 +1,6 @@
 package com.WebProject.config;
 
-import com.WebProject.Member.MemberDetailsService;
+import com.WebProject.Member.UserMemberDetailsService;
 import com.WebProject.jwt.JwtAuthenticationFilter;
 import com.WebProject.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
@@ -27,7 +26,7 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final MemberDetailsService memberDetailsService;
+    private final UserMemberDetailsService memberDetailsService;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -46,21 +45,21 @@ public class SecurityConfig {
         http
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
-                .csrf().disable() // csrf 보안 토큰 disable처리.
-                .httpBasic().disable() // rest api 만을 고려하여 기본 설정은 해제하겠습니다.
+                .csrf().disable() // JWT로 인증하기 때문에 기본 설정은 해제
+                .httpBasic().disable() // JWT로 인증하기 때문에 기본 설정은 해제
                 .exceptionHandling()
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 역시 사용하지 않습니다.
+
                 .and()
                 .authorizeRequests()
                 .antMatchers("/member", "/member/login", "/member/findEmail", "/member/findPassword", "/store", "/store/all"
                 , "/store/name", "/store/address", "/store/type").permitAll()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().authenticated()
+
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, memberDetailsService),
-                UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, memberDetailsService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

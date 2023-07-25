@@ -6,18 +6,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class MemberDetailsService implements UserDetailsService {
+public class UserMemberDetailsService implements UserDetailsService {
 
-    private final EntityManager em;
+    private final MemberRepository memberRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = em.find(Member.class, username);
-        if(member == null) new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
-        return new MemberDetails(member);
+        Optional<Member> member = memberRepository.findById(username);
+        member.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        return new UserMember(member.get());
     }
 }

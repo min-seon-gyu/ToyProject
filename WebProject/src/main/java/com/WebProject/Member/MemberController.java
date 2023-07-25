@@ -64,8 +64,8 @@ public class MemberController {
 
     @ApiOperation(value = "로그아웃 기능", notes = "로그아웃 API")
     @GetMapping("/member/logout")
-    public void logout(@AuthenticationPrincipal MemberDetails memberDetails){
-        MemberResponse memberResponse = MemberResponse.of(memberDetails.getMember());
+    public void logout(@AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : member") Member member){
+        MemberResponse memberResponse = MemberResponse.of(member);
         if(jwtTokenProvider.deleteToken(memberResponse.getEmail())){
             log.info("로그아웃 - [Result]:True");
         }else{
@@ -75,27 +75,27 @@ public class MemberController {
 
     @ApiOperation(value = "회원 정보 기능", notes = "회원 정보 API")
     @GetMapping("/member")
-    public MemberResponse info(@AuthenticationPrincipal MemberDetails memberDetails){
-            MemberResponse memberResponse = MemberResponse.of(memberDetails.getMember());
+    public MemberResponse info(@AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : member") Member member){
+            MemberResponse memberResponse = MemberResponse.of(member);
             log.info("회원 정보 - [Email]:{}, [Name]:{}, [Number]:{}, [RRN]:{}", memberResponse.getEmail(), memberResponse.getName(), memberResponse.getNumber(), memberResponse.getRrn());
             return memberResponse;
     }
 
     @ApiOperation(value = "회원 탈퇴 기능", notes = "회원 탈퇴 API")
     @DeleteMapping("/member")
-    public boolean delete(@AuthenticationPrincipal MemberDetails memberDetails){
-            memberService.delete(memberDetails.getMember());
-            log.info("회원 탈퇴 - [EMAIL]:{}", memberDetails.getMember().getEmail());
+    public boolean delete(@AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : member") Member member){
+            memberService.delete(member);
+            log.info("회원 탈퇴 - [EMAIL]:{}", member.getEmail());
             return true;
     }
 
     @ApiOperation(value = "회원 수정 기능", notes = "회원 수정  API",response = MemberResponse.class)
     @PatchMapping("/member")
     public MemberResponse update(
-            @AuthenticationPrincipal MemberDetails memberDetails,
+            @AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : member") Member member,
             @ApiParam(value = "이메일, 이름, 주민등록번호, 연락처", required = true)
             @RequestBody UpdateRequest updateRequest){
-            MemberResponse memberResponse = memberService.update(memberDetails.getMember().getEmail(), updateRequest);
+            MemberResponse memberResponse = memberService.update(member.getEmail(), updateRequest);
             log.info("회원 수정 - [EMAIL]:{}", memberResponse.getEmail());
             return memberResponse;
     }
@@ -103,10 +103,10 @@ public class MemberController {
     @ApiOperation(value = "Access Token 재발급 기능", notes = "Access Token 재발급 API", response = TokenResponse.class)
     @GetMapping("/member/reissue")
     public TokenResponse reissue(
-            @AuthenticationPrincipal MemberDetails memberDetails,
+            @AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : member") Member member,
             @RequestHeader(value ="Authorization") String value
     ) throws JsonProcessingException {
-        MemberResponse memberResponse = MemberResponse.of(memberDetails.getMember());
+        MemberResponse memberResponse = MemberResponse.of(member);
         log.info("Access Token 재발급 - [Email]:{}", memberResponse.getEmail());
         return jwtTokenProvider.reissueAtk(memberResponse, value);
     }
