@@ -59,8 +59,6 @@ public class MemberController {
             @RequestBody FindPasswordRequest findPasswordRequest){
         boolean isValid = memberService.findPassword(findPasswordRequest);
         log.info("비밀번호 찾기 - [Result]:{}", isValid);
-        String aaa = "asd";
-        aaa.equals("asd");
         return isValid;
     }
 
