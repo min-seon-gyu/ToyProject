@@ -173,7 +173,62 @@ JWT 학습 - https://velog.io/@gcael/JWT-%EC%9E%85%EB%AC%B8
 ## 유지 보수를 진행하면서 배운 점
 
 - ### 전체 코드 리팩토링(7월 24일 ~ 7월 25일)
-프로젝트를 유지 보수하면서 제일 우선적으로 진행한 내용이다. 기존에는 REST API스러운 목표를 가지고 있었는데 시간이 지나고 보니 미흡했던점이 많았다
+프로젝트를 유지 보수하면서 제일 우선적으로 진행한 내용이다. 기존에는 REST API스러운 목표를 가지고 있었는데 시간이 지나고 보니 미흡했던점이 많았다. 이를 보완하기 위하여 Controller 코드를 변경하였고 전체 적인 구조에서 필요없는 부분을 수정하였다.
+
+기존 코드
+```java
+    @PostMapping("/member/join")
+    public MemberResponse join(
+            @ApiParam(value = "이메일, 패스워드, 이름, 주민등록번호, 연락처", required = true)
+            @RequestBody SignUpRequest signUpRequest) {
+        return memberService.signUp(signUpRequest);
+    }
+
+    @PostMapping("/member/delete")
+    public boolean delete(@AuthenticationPrincipal MemberDetails memberDetails){
+            memberService.delete(memberDetails.getMember());
+            log.info("회원 탈퇴 - [EMAIL]:{}", memberDetails.getMember().getEmail());
+            return true;
+    }
+
+    @PutMapping("/member/update")
+    public MemberResponse update(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @ApiParam(value = "이메일, 이름, 주민등록번호, 연락처", required = true)
+            @RequestBody UpdateRequest updateRequest){
+            MemberResponse memberResponse = memberService.update(memberDetails.getMember().getEmail(), updateRequest);
+            log.info("회원 수정 - [EMAIL]:{}", memberResponse.getEmail());
+            return memberResponse;
+    }
+```
+
+변경 코드
+```java
+    @PostMapping("/member")
+    public MemberResponse join(
+            @ApiParam(value = "이메일, 패스워드, 이름, 주민등록번호, 연락처", required = true)
+            @RequestBody SignUpRequest signUpRequest) {
+        return memberService.signUp(signUpRequest);
+    }
+
+    @DeleteMapping("/member")
+    public boolean delete(@AuthenticationPrincipal MemberDetails memberDetails){
+            memberService.delete(memberDetails.getMember());
+            log.info("회원 탈퇴 - [EMAIL]:{}", memberDetails.getMember().getEmail());
+            return true;
+    }
+
+    @PatchMapping("/member")
+    public MemberResponse update(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @ApiParam(value = "이메일, 이름, 주민등록번호, 연락처", required = true)
+            @RequestBody UpdateRequest updateRequest){
+            MemberResponse memberResponse = memberService.update(memberDetails.getMember().getEmail(), updateRequest);
+            log.info("회원 수정 - [EMAIL]:{}", memberResponse.getEmail());
+            return memberResponse;
+```
+
+등 REST API 리팩토링를 진행하였다.
 
 - ### 검색 기능 퍼포먼스 향상 - 1 (9월 12일)
 DB에 대한 학습을 하는 중 LIKE에 대한 글을 보게 되었다. 그리고 LIKE에 단점을 알게되었는데 검색 속도가 많이 느리다는 점이 있었다. 기존 프로젝트에서는 이름, 타입, 주소별 검색을 하였는데 오늘은 타입과 주소별 검색하였을 때 성능을 향상시키기 위하여 전문검색이라는 기술을 적용시켰다.
