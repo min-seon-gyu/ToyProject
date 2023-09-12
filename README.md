@@ -170,6 +170,49 @@ JWT 토큰을 사용하면서 쿠키와 세션에 대해서도 자세히 학습�
 
 JWT 학습 - https://velog.io/@gcael/JWT-%EC%9E%85%EB%AC%B8
 
+## 유지 보수를 진행하면서 배운 점
 
+- ### 전체 코드 리팩토링(7월 24일 ~ 7월 25일)
+프로젝트를 유지 보수하면서 제일 우선적으로 진행한 내용이다. 기존에는 REST API스러운 목표를 가지고 있었는데 시간이 지나고 보니 미흡했던점이 많았다
+
+- ### 검색 기능 퍼포먼스 향상 - 1 (9월 12일)
+DB에 대한 학습을 하는 중 LIKE에 대한 글을 보게 되었다. 그리고 LIKE에 단점을 알게되었는데 검색 속도가 많이 느리다는 점이 있었다. 기존 프로젝트에서는 이름, 타입, 주소별 검색을 하였는데 오늘은 타입과 주소별 검색하였을 때 성능을 향상시키기 위하여 전문검색이라는 기술을 적용시켰다.
+
+기존 코드
+```java
+    @Query(value = "select id, name, address, tell ,operating_time, type, representative_menu, lat,lon ,(select avg(value) from score where score.id = store.id) score from store where store.address like %:address% order by score desc", nativeQuery = true)
+    List<Store> getListByAddress(@Param("address") String address);
+
+    @Query(value = "select count(*) from store where store.address like %:address%", nativeQuery = true)
+    Long getListByAddressCount(@Param("address") String address);
+
+    @Query(value = "select id, name, address, tell ,operating_time, type, representative_menu, lat,lon ,(select avg(value) from score where score.id = store.id) score from store where store.type like %:type% order by score desc", nativeQuery = true)
+    List<Store> getListByType(@Param("type") String type);
+
+    @Query(value = "select count(*) from store where store.type like %:type%", nativeQuery = true)
+    Long getListByTypeCount(@Param("type") String type);
+```
+변경 후 코드
+```java
+    @Query(value = "select id, name, address, tell ,operating_time, type, representative_menu, lat,lon ,(select avg(value) from score where score.id = store.id) score from store WHERE MATCH(address) AGAINST(:address in boolean mode) order by score desc", nativeQuery = true)
+    List<Store> getListByAddress(@Param("address") String address);
+
+    @Query(value = "select count(*) from store WHERE MATCH(address) AGAINST(:address in boolean mode)", nativeQuery = true)
+    Long getListByAddressCount(@Param("address") String address);
+
+    @Query(value = "select id, name, address, tell ,operating_time, type, representative_menu, lat,lon ,(select avg(value) from score where score.id = store.id) score from store WHERE MATCH(type) AGAINST(:type in boolean mode) order by score desc", nativeQuery = true)
+    List<Store> getListByType(@Param("type") String type);
+
+    @Query(value = "select count(*) from store WHERE MATCH(type) AGAINST(:type in boolean mode)", nativeQuery = true)
+    Long getListByTypeCount(@Param("type") String type);
+```
+
+기존 코드 성능
+![결과1](https://github.com/min-seon-gyu/Toy_Project/assets/87053159/f1aab85c-daed-4c34-8604-f1dc9ee7af82)
+변경 후 코드 성능
+![결과2](https://github.com/min-seon-gyu/Toy_Project/assets/87053159/56d4abf1-ed02-4d9d-a648-fb3e314870b8)
+
+
+  
 
 
