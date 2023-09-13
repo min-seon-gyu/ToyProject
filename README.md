@@ -265,7 +265,7 @@ DB에 대한 학습을 하는 중 LIKE에 대한 글을 보게 되었다. 그리
 성능 비교는 Jmeter 프로그램을 사용하였다. 이번에는 테스트를 위해 간단한 조작만 익힌 후 진행을 하였으며, Jmeter에 대한 학습은 이후에 정리를 해보겠다.
 
 요청 스펙은 다음과 같다.
-![요청](https://github.com/min-seon-gyu/Toy_Project/assets/87053159/71f7965d-bfab-48fb-97fb-fbe6702bac01)
+![그룹](https://github.com/min-seon-gyu/Toy_Project/assets/87053159/450ce0ce-a50a-4486-88b1-4a40136366b9)
 
 기존 코드 성능
 ![결과1](https://github.com/min-seon-gyu/Toy_Project/assets/87053159/f1aab85c-daed-4c34-8604-f1dc9ee7af82)
