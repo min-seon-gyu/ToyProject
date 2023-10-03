@@ -231,7 +231,7 @@ JWT 학습 - https://velog.io/@gcael/JWT-%EC%9E%85%EB%AC%B8
 등 REST API 리팩토링를 진행하였다.
 
 - ### 검색 기능 퍼포먼스 향상 - 1 (9월 12일)
-DB에 대한 학습을 하는 중 LIKE에 대한 글을 보게 되었다. 그리고 LIKE에 단점을 알게되었는데 검색 속도가 많이 느리다는 점이 있었다. 기존 프로젝트에서는 이름, 타입, 주소별 검색을 하였는데 오늘은 타입과 주소별 검색하였을 때 성능을 향상시키기 위하여 전문검색이라는 기술을 적용시켰다.
+DB에 대한 학습을 하는 중 LIKE에 대한 글을 보게 되었다. 그리고 LIKE에 단점을 알게되었는데 검색 속도가 많이 느리다는 점이 있었다. 기존 프로젝트에서는 이름, 타입, 주소별 검색을 하였는데 오늘은 타입과 주소별 검색하였을 때 성능을 향상시키기 위하여 전문검색(Fulltext Search) 기술을 적용시켰다.
 
 기존 코드
 ```java
@@ -262,12 +262,20 @@ DB에 대한 학습을 하는 중 LIKE에 대한 글을 보게 되었다. 그리
     Long getListByTypeCount(@Param("type") String type);
 ```
 
+성능 비교는 Jmeter 프로그램을 사용하였다. 이번에는 테스트를 위해 간단한 조작만 익힌 후 진행을 하였으며, Jmeter에 대한 학습은 이후에 정리를 해보겠다.
+
+요청 스펙은 다음과 같다.
+![그룹](https://github.com/min-seon-gyu/Toy_Project/assets/87053159/450ce0ce-a50a-4486-88b1-4a40136366b9)
+
 기존 코드 성능
 ![결과1](https://github.com/min-seon-gyu/Toy_Project/assets/87053159/f1aab85c-daed-4c34-8604-f1dc9ee7af82)
 변경 후 코드 성능
 ![결과2](https://github.com/min-seon-gyu/Toy_Project/assets/87053159/56d4abf1-ed02-4d9d-a648-fb3e314870b8)
 
+성능은 많이 올라갔지만 오류율이 검출되었다. 오류율을 해결하기 위해 학습을 하고 보완하는 글을 작성하겠다.
 
-  
+재 변경 후 코드 성능
+![마지막결과](https://github.com/min-seon-gyu/Toy_Project/assets/87053159/17686212-fdd4-4ebc-92a6-ac53374717b7)
 
+오류율에 대한 원인 분석으로는 Jmeter 프로그램에 있었다. 기존에 발생했던 오류는 모두 org.apache.http.conn.HttpHostConnectException 오류였다. 이는 Jmeter에 시작 지연 및 기간에 대한 설정값이 원인으로 설정값 변경 후에는 오류율이 0%를 달성했다. 완벽한 분석은 끝나지 않아 이 원인도 후에 정리를 남겨보겠다.
 
