@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 
 @Getter
-public class CommentAddRequest {
+public class CommentRequest {
     @ApiModelProperty(example = "상점 id")
     private long id;
     @ApiModelProperty(example = "이메일")

@@ -18,7 +18,7 @@ public class CommentService {
     private final EntityManager em;
 
     @Transactional
-    public CommentResponse addComment(CommentAddRequest commentRequest){
+    public CommentResponse addComment(CommentRequest commentRequest){
         Store store = em.find(Store.class, commentRequest.getId());
         if(store == null) throw new BadRequestException("존재하지 않는 상점 id 입니다.");
 

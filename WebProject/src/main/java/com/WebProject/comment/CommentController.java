@@ -16,8 +16,8 @@ public class CommentController {
     @PostMapping("/comment")
     public CommentResponse addScore(
             @ApiParam(value = "CommentRequest", required = true)
-            @RequestBody CommentAddRequest commentAddRequest){
-        return commentService.addComment(commentAddRequest);
+            @RequestBody CommentRequest commentRequest){
+        return commentService.addComment(commentRequest);
     }
 
     @ApiOperation(value = "댓글 삭제 기능", notes = "댓글 삭제 API")
